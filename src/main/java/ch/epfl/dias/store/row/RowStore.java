@@ -39,7 +39,24 @@ public class RowStore extends Store {
 			BufferedReader reader =	new BufferedReader(new InputStreamReader(in)); 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				String[] data = line.split(delimiter);
+				Object[] data = new Object[schema.length];
+				String[] fields = line.split(delimiter);
+				for (int i=0; i < fields.length; i++){
+					switch(schema[i]){
+						case INT:
+							data[i] = Integer.parseInt(fields[i]);
+							break;
+						case DOUBLE:
+							data[i] = Double.parseDouble(fields[i]);
+							break;
+						case STRING:
+							data[i] = fields[i];
+							break;
+						case BOOLEAN:
+							data[i] = Boolean.parseBoolean(fields[i]);
+							break;
+					}
+				}
 				DBTuple perTuple = new DBTuple(data,schema);
 				relationTuple.add(perTuple);
 			}
