@@ -26,12 +26,14 @@ public class RowStore extends Store {
 		this.schema = schema;
 		this.filename = filename;
 		this.delimiter = delimiter;
+		this.relationTuple = new ArrayList<DBTuple>();
 	}
 
 	@Override
 	public void load() {
 		// TODO: Implement
-		Path pathToFile = Paths.get("./input/" + filename);
+		String projectPath = System.getProperty("user.dir");
+		Path pathToFile = Paths.get(projectPath + "/" +filename);
 		try {
 			InputStream in = Files.newInputStream(pathToFile);
 			BufferedReader reader =	new BufferedReader(new InputStreamReader(in)); 
