@@ -9,7 +9,7 @@ public class Project implements VolcanoOperator {
 
 	// TODO: Add required structures
 
-	public Project(VolcanoOperator child, BinaryOp op, int fieldNo, int value) {
+	public Project(VolcanoOperator child, int fieldNo) {
 		// TODO: Implement
 	}
 

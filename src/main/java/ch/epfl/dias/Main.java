@@ -27,7 +27,7 @@ public class Main {
 		// ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(paxstore);
 		// DBTuple currentTuple = scan.next();
 		// while (!currentTuple.eof) {
-		// 	System.out.println(currentTuple.getFieldAsString(1));
+		// 	System.out.println(currentTuple.getFieldAsInt(1));
 		// 	currentTuple = scan.next();
 		// }
 
