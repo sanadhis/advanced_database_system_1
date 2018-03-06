@@ -41,17 +41,38 @@ public class ColumnStore extends Store {
 			InputStream in = Files.newInputStream(pathToFile);
 			BufferedReader reader =	new BufferedReader(new InputStreamReader(in)); 
 			String line = null;
-			List<List<String>> genericArr =  new ArrayList<List<String>>();
+			List<List<Object>> genericArr = new ArrayList<List<Object>>();
+			
+			for (int i=0; i<schema.length; i++){
+				genericArr.add(new ArrayList<Object>());
+			}
+
 			while ((line = reader.readLine()) != null) {
 				String[] data = line.split(delimiter);
 				for (int i=0; i<data.length; i++){
-					genericArr.get(i).add(data[i]);
+					Object datapoint = null;
+					switch(schema[i]){
+						case INT:
+							datapoint = Integer.parseInt(data[i]);
+							break;
+						case DOUBLE:
+							datapoint = Double.parseDouble(data[i]);
+							break;
+						case STRING:
+							datapoint = data[i];
+							break;
+						case BOOLEAN:
+							datapoint = Boolean.parseBoolean(data[i]);
+							break;
+					}
+					genericArr.get(i).add(datapoint);
 				}
 			}
-			for (List<String> arr: genericArr){
-				String[] fields = new String[arr.size()];
+			int index = 0;
+			for (List<Object> arr: genericArr){
+				Object[] fields = new Object[arr.size()];
 				fields = arr.toArray(fields);
-				DBColumn perColumn = new DBColumn(fields,schema[0]);
+				DBColumn perColumn = new DBColumn(fields,schema[index++]);
 				relationColumn.add(perColumn);
 			}
 		} catch (IOException x) {
