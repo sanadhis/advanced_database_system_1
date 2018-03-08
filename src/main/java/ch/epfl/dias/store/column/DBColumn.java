@@ -21,6 +21,10 @@ public class DBColumn {
 	public DBColumn(){
 		this.eof = true;
 	}
+
+	public DataType getDataType(){
+		return this.type;
+	}
 	
 	public Integer[] getAsInteger() {
 		Integer integerArray[] = Arrays.asList(fields)

@@ -32,6 +32,10 @@ public class ColumnStore extends Store {
 		this.relationColumn = new ArrayList<DBColumn>(schema.length);
 	}
 
+	public int getNumberOfColumn(){
+		return schema.length();
+	}
+
 	@Override
 	public void load() {
 		// TODO: Implement

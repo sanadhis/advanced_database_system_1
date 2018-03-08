@@ -9,18 +9,15 @@ import java.util.ArrayList;
 public class DBPAXpage {
 
 	private ArrayList<DBColumn> PAXminipages;
-	private DataType[] types;
 	private boolean eof;
 	// TODO: Implement
 
 	public DBPAXpage(Object[][] pagesRecord, DataType[] types){
 		PAXminipages = new ArrayList<DBColumn>();
 		
-		this.types = types;
-
 		int index = 0;
 		for(Object[] pageAttribute: pagesRecord){
-			DBColumn minipage = new DBColumn(pageAttribute, this.types[index++]);
+			DBColumn minipage = new DBColumn(pageAttribute, types[index++]);
 			PAXminipages.add(minipage);
 		}
 
@@ -32,9 +29,11 @@ public class DBPAXpage {
 	}
 
 	public DBTuple getTuple(int rowNumber){
-		Object[] composedTuple = new Object[types.length];
+		Object[] composedTuple = new Object[PAXminipages.size()];
+		DataType[] types = new DataType[PAXminipages.size()];
 		int index = 0;
 		for(DBColumn minipage: PAXminipages){
+			types[index] = minipage.getDataType();
 			switch(types[index]){
 				case INT:
 					composedTuple[index] = minipage.getAsInteger()[rowNumber];
