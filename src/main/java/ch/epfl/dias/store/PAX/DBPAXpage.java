@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class DBPAXpage {
 
-	public ArrayList<DBColumn> PAXminipages;
-	public DataType[] types;
-	public boolean eof;
+	private ArrayList<DBColumn> PAXminipages;
+	private DataType[] types;
+	private boolean eof;
 	// TODO: Implement
 
 	public DBPAXpage(Object[][] pagesRecord, DataType[] types){

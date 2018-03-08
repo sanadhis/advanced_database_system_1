@@ -19,10 +19,10 @@ import java.util.List;
 public class ColumnStore extends Store {
 
 	// TODO: Add required structures
-	public DataType[] schema;
-	public String filename;
-	public String delimiter;
-	public ArrayList<DBColumn> relationColumn;
+	private DataType[] schema;
+	private String filename;
+	private String delimiter;
+	private ArrayList<DBColumn> relationColumn;
 
 	public ColumnStore(DataType[] schema, String filename, String delimiter) {
 		// TODO: Implement

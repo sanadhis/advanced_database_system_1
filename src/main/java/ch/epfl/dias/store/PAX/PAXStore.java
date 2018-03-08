@@ -20,11 +20,11 @@ import java.util.List;
 public class PAXStore extends Store {
 
 	// TODO: Add required structures
-	public DataType[] schema;
-	public String filename;
-	public String delimiter;
-	public int tuplesPerPage;
-	public ArrayList<DBPAXpage> paxPages;
+	private DataType[] schema;
+	private String filename;
+	private String delimiter;
+	private int tuplesPerPage;
+	private ArrayList<DBPAXpage> paxPages;
 
 	public PAXStore(DataType[] schema, String filename, String delimiter, int tuplesPerPage) {
 		// TODO: Implement

@@ -16,10 +16,10 @@ import java.io.InputStreamReader;
 public class RowStore extends Store {
 
 	// TODO: Add required structures
-	public DataType[] schema;
-	public String filename;
-	public String delimiter;
-	public ArrayList<DBTuple> relationTuple;
+	private DataType[] schema;
+	private String filename;
+	private String delimiter;
+	private ArrayList<DBTuple> relationTuple;
 
 	public RowStore(DataType[] schema, String filename, String delimiter) {
 		// TODO: Implement

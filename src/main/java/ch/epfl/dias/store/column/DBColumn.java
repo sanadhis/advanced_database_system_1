@@ -8,9 +8,9 @@ import ch.epfl.dias.store.DataType;
 public class DBColumn {
 
 	// TODO: Implement
-	public Object[] fields;
-	public DataType type;
-	public boolean eof;
+	private Object[] fields;
+	private DataType type;
+	private boolean eof;
 
 	public DBColumn(Object[] fields, DataType type){
 		this.fields = fields;
