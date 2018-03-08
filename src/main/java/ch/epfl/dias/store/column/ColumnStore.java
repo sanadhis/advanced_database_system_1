@@ -32,7 +32,7 @@ public class ColumnStore extends Store {
 		this.relationColumn = new ArrayList<DBColumn>(schema.length);
 	}
 
-	public int getNumberOfColumn(){
+	public int getNumberOfColumns(){
 		return schema.length();
 	}
 
