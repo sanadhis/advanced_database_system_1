@@ -13,7 +13,7 @@ public class DBPAXpage {
 	public boolean eof;
 	// TODO: Implement
 
-	public DBPAXpage(Object[][] pagesRecord, DataType[] types, int size){
+	public DBPAXpage(Object[][] pagesRecord, DataType[] types){
 		PAXminipages = new ArrayList<DBColumn>();
 		
 		this.types = types;

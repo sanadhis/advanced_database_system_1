@@ -71,13 +71,13 @@ public class PAXStore extends Store {
 				}
 				counter++;
 				if (counter == tuplesPerPage){
-					paxPages.add(new DBPAXpage(genericArr, schema, tuplesPerPage));
+					paxPages.add(new DBPAXpage(genericArr, schema));
 					genericArr = new Object[schema.length][tuplesPerPage];
 					counter = 0;
 				}
 			}
 			if (counter != 0){
-				paxPages.add(new DBPAXpage(genericArr, schema, tuplesPerPage));
+				paxPages.add(new DBPAXpage(genericArr, schema));
 			}
 		} catch (IOException x) {
 			System.err.println(x);
