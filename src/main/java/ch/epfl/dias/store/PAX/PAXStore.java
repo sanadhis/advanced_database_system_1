@@ -88,7 +88,12 @@ public class PAXStore extends Store {
 	public DBTuple getRow(int rownumber) {
 		int pagePosition = rownumber / tuplesPerPage ;
 		int rowPosition = rownumber % tuplesPerPage ;
-		DBTuple rowResult = paxPages.get(pagePosition).getTuple(rowPosition);
-		return rowResult;
+		try{
+			DBTuple rowResult = paxPages.get(pagePosition).getTuple(rowPosition);
+			return rowResult;
+		}
+		catch(IndexOutOfBoundsException e){
+			return new DBTuple();
+		}
 	}
 }

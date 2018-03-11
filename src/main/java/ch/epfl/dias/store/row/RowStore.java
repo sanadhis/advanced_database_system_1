@@ -67,7 +67,12 @@ public class RowStore extends Store {
 
 	@Override
 	public DBTuple getRow(int rownumber) {
-		DBTuple result = relationTuple.get(rownumber);
-		return result;
+		try{
+			DBTuple result = relationTuple.get(rownumber);
+			return result;
+		}
+		catch(IndexOutOfBoundsException e){
+			return new DBTuple();
+		}
 	}
 }

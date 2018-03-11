@@ -21,11 +21,11 @@ public class DBPAXpage {
 			PAXminipages.add(minipage);
 		}
 
-		this.eof = true;
+		this.eof = false;
 	}
 
 	public DBPAXpage(){
-		this.eof = false;
+		this.eof = true;
 	}
 
 	public DBTuple getTuple(int rowNumber){

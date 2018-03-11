@@ -33,7 +33,7 @@ public class ColumnStore extends Store {
 	}
 
 	public int getNumberOfColumns(){
-		return schema.length();
+		return schema.length;
 	}
 
 	@Override
