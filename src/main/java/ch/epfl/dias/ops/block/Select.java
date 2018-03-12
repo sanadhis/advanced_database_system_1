@@ -73,13 +73,13 @@ public class Select implements BlockOperator {
 					result = block.getAsInteger();
 					break;
 				case DOUBLE:
-					result = block.getAsInteger();
+					result = block.getAsDouble();
 					break;
 				case STRING:
-					result = block.getAsInteger();
+					result = block.getAsString();
 					break;
 				case BOOLEAN:
-					result = block.getAsInteger();
+					result = block.getAsBoolean();
 					break;
 			}
 			Object[] blockResult = new Object[selectionIndex.size()];

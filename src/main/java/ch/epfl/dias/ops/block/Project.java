@@ -17,11 +17,11 @@ public class Project implements BlockOperator {
 
 	public DBColumn[] execute() {
 		// TODO: Implement
-		DBColumn[] scan = childOperator.execute();
+		DBColumn[] childBlock = childOperator.execute();
 		DBColumn[] results = new DBColumn[columns.length];
 		int index=0;
 		for (int column : columns){
-			results[index++] = scan[column];
+			results[index++] = childBlock[column];
 		}
 		return results;
 	}
