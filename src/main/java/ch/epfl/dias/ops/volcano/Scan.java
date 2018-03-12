@@ -26,6 +26,7 @@ public class Scan implements VolcanoOperator {
 	@Override
 	public DBTuple next() {
 		// TODO: Implement
+		// System.out.println(rowIndex);
 		return store.getRow(rowIndex++);
 	}
 
@@ -35,4 +36,5 @@ public class Scan implements VolcanoOperator {
 		rowIndex = 0;
 		store = null;
 	}
+
 }

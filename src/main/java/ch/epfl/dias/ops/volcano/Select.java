@@ -73,7 +73,7 @@ public class Select implements VolcanoOperator {
 			return currentTuple;
 		}
 		else{
-			return null;
+			return this.next();
 		}
 	}
 
@@ -82,4 +82,5 @@ public class Select implements VolcanoOperator {
 		// TODO: Implement
 		child.close();
 	}
+
 }

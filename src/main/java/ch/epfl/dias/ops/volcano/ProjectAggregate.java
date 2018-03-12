@@ -84,9 +84,6 @@ public class ProjectAggregate implements VolcanoOperator {
 		// TODO: Implement
 		child.open();
 		currentTuple = child.next();
-		while(currentTuple==null){
-			currentTuple = child.next();
-		}
 		while(!currentTuple.eof){
 			if(currentTuple != null){
 				switch(dt){
@@ -108,12 +105,6 @@ public class ProjectAggregate implements VolcanoOperator {
 				}
 			}
 			currentTuple = child.next();
-			while(currentTuple==null){
-				currentTuple = child.next();
-			}
-			// if(currentTuple.eof){
-			// 	System.out.println("yeay");
-			// }
 		}
 	}
 
