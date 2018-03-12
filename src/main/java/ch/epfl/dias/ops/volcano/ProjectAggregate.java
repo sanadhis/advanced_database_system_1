@@ -24,7 +24,6 @@ public class ProjectAggregate implements VolcanoOperator {
 	private Double maxDouble;
 	private Double countDouble;
 	private Double resultDouble;
-	private Object result;
 
 	public ProjectAggregate(VolcanoOperator child, Aggregate agg, DataType dt, int fieldNo) {
 		// TODO: Implement
@@ -40,7 +39,6 @@ public class ProjectAggregate implements VolcanoOperator {
 		this.minDouble = new Double(Double.MAX_VALUE);
 		this.maxDouble = new Double(Double.MIN_VALUE);
 		this.countDouble = new Double(0);
-		this.result = null;
 	}
 
 	public Double getMin(Double a, Double b){
@@ -111,6 +109,8 @@ public class ProjectAggregate implements VolcanoOperator {
 	@Override
 	public DBTuple next() {
 		// TODO: Implement
+		Object result = null;
+
 		switch(dt){
 			case INT:
 				switch(agg){
