@@ -86,6 +86,13 @@ public class ColumnStore extends Store {
 
 	@Override
 	public DBColumn[] getColumns(int[] columnsToGet) {
+		if(columnsToGet.length == 0){
+			int numberOfColumns = this.getNumberOfColumns();
+			columnsToGet = new int[numberOfColumns];
+			for(int i=0; i<numberOfColumns; i++){
+				columnsToGet[i] = i;
+			}
+		}
 		DBColumn[] columnsResult = new DBColumn[columnsToGet.length];
 		for(int i=0; i<columnsToGet.length; i++){
 			columnsResult[i] = relationColumn.get(columnsToGet[i]);
