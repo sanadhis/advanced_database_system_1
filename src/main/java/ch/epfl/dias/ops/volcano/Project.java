@@ -11,10 +11,10 @@ public class Project implements VolcanoOperator {
 
 	// TODO: Add required structures
 	private VolcanoOperator child;
-	private int fieldNo;
+	private int[] fieldNo;
 	private DBTuple currentTuple;	
 
-	public Project(VolcanoOperator child, int fieldNo) {
+	public Project(VolcanoOperator child, int[] fieldNo) {
 		// TODO: Implement
 		this.child = child;
 		this.fieldNo = fieldNo;
@@ -30,23 +30,18 @@ public class Project implements VolcanoOperator {
 	public DBTuple next() {
 		// TODO: Implement
 		currentTuple = child.next();
-		Object selectedField = null;
-		DataType selectedType = currentTuple.types[fieldNo];
-		switch(selectedType){
-			case INT:
-				selectedField = currentTuple.getFieldAsInt(fieldNo);
-				break;
-			case DOUBLE:
-				selectedField = currentTuple.getFieldAsDouble(fieldNo);
-				break;
-			case STRING:
-				selectedField = currentTuple.getFieldAsString(fieldNo);
-				break;
-			case BOOLEAN:
-				selectedField = currentTuple.getFieldAsBoolean(fieldNo);
-				break;
+		if (currentTuple.eof){
+			return currentTuple;
 		}
-		return new DBTuple(new Object[]{selectedField}, new DataType[]{selectedType});
+		Object[] selectedField = new Object[fieldNo.length];
+		DataType[] selectedDataType = new DataType[fieldNo.length];
+		int index = 0;
+		for(int attribute: fieldNo){
+			selectedField[index] = currentTuple.getFieldAsObject(attribute);
+			selectedDataType[index++] = currentTuple.types[attribute];
+		}
+
+		return new DBTuple(selectedField, selectedDataType);
 	}
 
 	@Override
