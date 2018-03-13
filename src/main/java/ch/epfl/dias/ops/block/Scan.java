@@ -16,11 +16,6 @@ public class Scan implements BlockOperator {
 	@Override
 	public DBColumn[] execute() {
 		// TODO: Implement
-		int numberOfColumns = store.getNumberOfColumns();
-		int[] columsToGet = new int[numberOfColumns];
-		for(int i=0;i<numberOfColumns;i++){
-			columsToGet[i] = i;
-		}
-		return store.getColumns(columsToGet);
+		return store.getColumns(new int[]{});
 	}
 }
