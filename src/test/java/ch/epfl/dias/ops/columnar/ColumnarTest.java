@@ -7,6 +7,7 @@ import ch.epfl.dias.store.column.ColumnStore;
 import ch.epfl.dias.store.column.DBColumn;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,10 +46,25 @@ public class ColumnarTest {
 	}
 
 	@Test
+	public void simpleTest(){
+		DBColumn[] columns = columnstoreLineItem.getColumns(new int[]{10});
+		String[] x = columns[0].getAsString();
+		// for(String c: x){
+		// 	System.out.println(c);
+		// }
+		// System.out.println(columns[0].type);
+		assertEquals(x[3],"1996-04-21");
+	}
+
+	@Test
 	public void spTestData() {
 		/* SELECT COUNT(*) FROM data WHERE col4 == 6 */
 		ch.epfl.dias.ops.block.Scan scan = new ch.epfl.dias.ops.block.Scan(columnstoreData);
 		ch.epfl.dias.ops.block.Select sel = new ch.epfl.dias.ops.block.Select(scan, BinaryOp.EQ, 3, 6);
+		// DBColumn[] test = sel.execute();
+		// for(Object obj: test[0].getAsInteger()){
+		// 	System.out.println(obj);
+		// }
 		ch.epfl.dias.ops.block.ProjectAggregate agg = new ch.epfl.dias.ops.block.ProjectAggregate(sel, Aggregate.COUNT,
 				DataType.INT, 2);
 
@@ -66,7 +82,7 @@ public class ColumnarTest {
 		ch.epfl.dias.ops.block.Scan scan = new ch.epfl.dias.ops.block.Scan(columnstoreOrder);
 		ch.epfl.dias.ops.block.Select sel = new ch.epfl.dias.ops.block.Select(scan, BinaryOp.EQ, 0, 6);
 		ch.epfl.dias.ops.block.ProjectAggregate agg = new ch.epfl.dias.ops.block.ProjectAggregate(sel, Aggregate.COUNT,
-				DataType.INT, 2);
+				DataType.INT, 1);
 
 		DBColumn[] result = agg.execute();
 
@@ -90,6 +106,21 @@ public class ColumnarTest {
 		int output = result[0].getAsInteger()[0];
 
 		assertTrue(output == 3);
+	}
+
+	@Test
+	public void spTestLineItem2() {
+		/* SELECT COUNT(*) FROM data WHERE col0 == 3 */
+		ch.epfl.dias.ops.block.Scan scan = new ch.epfl.dias.ops.block.Scan(columnstoreLineItem);
+		ch.epfl.dias.ops.block.ProjectAggregate agg = new ch.epfl.dias.ops.block.ProjectAggregate(scan, Aggregate.COUNT,
+				DataType.INT, 8);
+
+		DBColumn[] result = agg.execute();
+
+		// This query should return only one result
+		int output = result[0].getAsInteger()[0];
+
+		assertTrue(output == 10);
 	}
 
 	@Test
@@ -133,6 +164,14 @@ public class ColumnarTest {
 		ch.epfl.dias.ops.block.Select selLineitem = new ch.epfl.dias.ops.block.Select(scanLineitem, BinaryOp.EQ, 0, 3);
 
 		ch.epfl.dias.ops.block.Join join = new ch.epfl.dias.ops.block.Join(selLineitem, selOrder, 0, 0);
+		// DBColumn[] x = join.execute();
+		// System.out.println(x.length);
+		// for (Double val: x[4].getAsDouble()){
+		// 	System.out.println(val);
+		// }
+		// for (String str: x[24].getAsString()){
+		// 	System.out.println(str);
+		// }
 		ch.epfl.dias.ops.block.ProjectAggregate agg = new ch.epfl.dias.ops.block.ProjectAggregate(join, Aggregate.COUNT,
 				DataType.INT, 0);
 
