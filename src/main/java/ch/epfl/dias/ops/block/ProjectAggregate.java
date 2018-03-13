@@ -33,7 +33,7 @@ public class ProjectAggregate implements BlockOperator {
 		// TODO: Implement
 		DBColumn[] childBlock = child.execute();
 		Object result = null;
-		switch(dt){
+		switch(childBlock[fieldNo].getDataType()){
 			case INT:
 				Integer[] blockAsInt = childBlock[fieldNo].getAsInteger();
 				sumInt = new Integer(0);
@@ -59,6 +59,14 @@ public class ProjectAggregate implements BlockOperator {
 					minDoub = getMin(minDoub, val);
 					countDoub++;
 				}
+				break;
+			case STRING:
+				String[] blockAsStrings = childBlock[fieldNo].getAsString();
+				countInt = new Integer(blockAsStrings.length);
+				break;
+			case BOOLEAN:
+				Boolean[] blockAsBoolean = childBlock[fieldNo].getAsBoolean();
+				countInt = new Integer(blockAsBoolean.length);
 				break;
 		}
 

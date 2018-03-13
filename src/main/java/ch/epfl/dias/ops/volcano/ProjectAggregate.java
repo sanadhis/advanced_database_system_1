@@ -84,10 +84,9 @@ public class ProjectAggregate implements VolcanoOperator {
 		currentTuple = child.next();
 		while(!currentTuple.eof){
 			if(currentTuple != null){
-				switch(dt){
+				switch(currentTuple.types[fieldNo]){
 					case INT:
 						Integer currentValueInt = currentTuple.getFieldAsInt(fieldNo);
-						// System.out.println(currentValueInt);
 						countInt += 1;
 						sumInt += currentValueInt;
 						minInt = getMin(minInt, currentValueInt);
@@ -99,6 +98,12 @@ public class ProjectAggregate implements VolcanoOperator {
 						sumDouble += currentValueDouble;
 						minDouble = getMin(minDouble, currentValueDouble);
 						maxDouble = getMax(maxDouble, currentValueDouble);
+						break;
+					case BOOLEAN:
+						countInt += 1;
+						break;
+					case STRING:
+						countInt += 1;
 						break;
 				}
 			}
