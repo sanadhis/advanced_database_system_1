@@ -39,12 +39,11 @@ public class ProjectAggregate implements BlockOperator {
 				sumInt = new Integer(0);
 				maxInt = new Integer(Integer.MAX_VALUE);
 				minInt = new Integer(Integer.MIN_VALUE);
-				countInt = new Integer(0);
+				countInt = new Integer(blockAsInt.length);
 				for(Integer val: blockAsInt){
 					sumInt += val;
 					maxInt = getMax(maxInt, val);
 					minInt = getMin(minInt, val);
-					countInt++;
 				}
 				break;
 			case DOUBLE:
@@ -52,12 +51,11 @@ public class ProjectAggregate implements BlockOperator {
 				sumDoub = new Double(0);
 				maxDoub = new Double(Double.MAX_VALUE);
 				minDoub = new Double(Double.MIN_VALUE);
-				countDoub = new Double(0);
+				countDoub = new Double(blockAsDouble.length);
 				for(Double val: blockAsDouble){
 					sumDoub += val;
 					maxDoub = getMax(maxDoub, val);
 					minDoub = getMin(minDoub, val);
-					countDoub++;
 				}
 				break;
 			case STRING:
