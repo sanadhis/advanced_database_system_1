@@ -13,7 +13,6 @@ public class ProjectAggregate implements VolcanoOperator {
 	private Aggregate agg;
 	private DataType dt;
 	private int fieldNo;
-	private DBTuple currentTuple;
 	private Integer sumInt;
 	private Integer minInt;
 	private Integer maxInt;
@@ -81,7 +80,7 @@ public class ProjectAggregate implements VolcanoOperator {
 	public void open() {
 		// TODO: Implement
 		child.open();
-		currentTuple = child.next();
+		DBTuple currentTuple = child.next();
 		while(!currentTuple.eof){
 			if(currentTuple != null){
 				switch(currentTuple.types[fieldNo]){
