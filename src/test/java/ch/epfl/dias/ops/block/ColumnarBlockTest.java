@@ -1,4 +1,4 @@
-package ch.epfl.dias.ops.columnar;
+package ch.epfl.dias.ops.block;
 
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.ops.BinaryOp;
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ColumnarTest {
+public class ColumnarBlockTest {
 
 	DataType[] orderSchema;
 	DataType[] lineitemSchema;
