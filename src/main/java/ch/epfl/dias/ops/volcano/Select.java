@@ -37,38 +37,44 @@ public class Select implements VolcanoOperator {
 		}
 
 		boolean selection=false;
-		switch(op){
-			case LT:
-				if(currentTuple.getFieldAsInt(fieldNo) < value){
-					selection = true;
-				}
-				break;
-			case LE:
-				if(currentTuple.getFieldAsInt(fieldNo) <= value){
-					selection = true;
-				}
-				break;
-			case EQ:
-				if(currentTuple.getFieldAsInt(fieldNo) == value){
-					selection = true;
-				}
-				break;
-			case NE:
-				if(currentTuple.getFieldAsInt(fieldNo) != value){
-					selection = true;
-				}
-				break;
-			case GT:
-				if(currentTuple.getFieldAsInt(fieldNo) > value){
-					selection = true;
-				}
-				break;
-			case GE:
-				if(currentTuple.getFieldAsInt(fieldNo) >= value){
-					selection = true;
-				}
-				break;
+		try{
+			switch(op){
+				case LT:
+					if(currentTuple.getFieldAsInt(fieldNo) < value){
+						selection = true;
+					}
+					break;
+				case LE:
+					if(currentTuple.getFieldAsInt(fieldNo) <= value){
+						selection = true;
+					}
+					break;
+				case EQ:
+					if(currentTuple.getFieldAsInt(fieldNo) == value){
+						selection = true;
+					}
+					break;
+				case NE:
+					if(currentTuple.getFieldAsInt(fieldNo) != value){
+						selection = true;
+					}
+					break;
+				case GT:
+					if(currentTuple.getFieldAsInt(fieldNo) > value){
+						selection = true;
+					}
+					break;
+				case GE:
+					if(currentTuple.getFieldAsInt(fieldNo) >= value){
+						selection = true;
+					}
+					break;
+			}
 		}
+		catch(NullPointerException e){
+			return new DBTuple();
+		}
+		
 		if(selection){
 			return currentTuple;
 		}
