@@ -46,7 +46,6 @@ public class Join implements VectorOperator {
 		}
 		leftIterator = leftVector.iterator();
 		currentRightVector = rightChild.next();
-		System.out.println(leftVector.size());
 	}
 
 	@Override
