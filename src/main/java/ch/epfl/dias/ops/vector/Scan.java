@@ -30,7 +30,7 @@ public class Scan implements VectorOperator {
 	@Override
 	public DBColumn[] next() {
 		// TODO: Implement
-		if(eofFlag){
+		if(eofFlag || vectorIndex>=allColumns.length-1){
 			return null;
 		}
 		else{
@@ -60,6 +60,7 @@ public class Scan implements VectorOperator {
 					catch(IndexOutOfBoundsException e){
 						blockResult[i] = null;
 						eofFlag = true;
+						break;
 					}
 				}
 				nextVector[index++] = new DBColumn(blockResult, column.getDataType());			
