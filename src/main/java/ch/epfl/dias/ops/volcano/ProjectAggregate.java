@@ -3,12 +3,10 @@ package ch.epfl.dias.ops.volcano;
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.ops.volcano.VolcanoOperator;
 import ch.epfl.dias.store.DataType;
-import ch.epfl.dias.store.Store;
 import ch.epfl.dias.store.row.DBTuple;
 
 public class ProjectAggregate implements VolcanoOperator {
 
-	// TODO: Add required structures
 	private VolcanoOperator child;
 	private Aggregate agg;
 	private DataType dt;
@@ -17,15 +15,12 @@ public class ProjectAggregate implements VolcanoOperator {
 	private Integer minInt;
 	private Integer maxInt;
 	private Integer countInt;
-	private Integer resultInt;
 	private Double sumDouble;
 	private Double minDouble;
 	private Double maxDouble;
 	private Double countDouble;
-	private Double resultDouble;
 
 	public ProjectAggregate(VolcanoOperator child, Aggregate agg, DataType dt, int fieldNo) {
-		// TODO: Implement
 		this.child = child;
 		this.agg = agg;
 		this.dt = dt;
@@ -78,7 +73,6 @@ public class ProjectAggregate implements VolcanoOperator {
 
 	@Override
 	public void open() {
-		// TODO: Implement
 		child.open();
 		DBTuple currentTuple = child.next();
 		while(!currentTuple.eof){
@@ -112,7 +106,6 @@ public class ProjectAggregate implements VolcanoOperator {
 
 	@Override
 	public DBTuple next() {
-		// TODO: Implement
 		Object result = null;
 
 		switch(dt){
@@ -162,7 +155,6 @@ public class ProjectAggregate implements VolcanoOperator {
 
 	@Override
 	public void close() {
-		// TODO: Implement
 		child.close();
 	}
 

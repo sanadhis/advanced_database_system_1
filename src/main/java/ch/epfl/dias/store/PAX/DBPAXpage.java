@@ -9,8 +9,6 @@ import java.util.ArrayList;
 public class DBPAXpage {
 
 	private ArrayList<DBColumn> PAXminipages;
-	private boolean eof;
-	// TODO: Implement
 
 	public DBPAXpage(Object[][] pagesRecord, DataType[] types){
 		PAXminipages = new ArrayList<DBColumn>();
@@ -20,12 +18,6 @@ public class DBPAXpage {
 			DBColumn minipage = new DBColumn(pageAttribute, types[index++]);
 			PAXminipages.add(minipage);
 		}
-
-		this.eof = false;
-	}
-
-	public DBPAXpage(){
-		this.eof = true;
 	}
 
 	public DBTuple getTuple(int rowNumber){

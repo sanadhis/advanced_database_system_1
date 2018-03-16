@@ -1,96 +1,89 @@
 package ch.epfl.dias.ops.vector;
 
-import ch.epfl.dias.ops.BinaryOp;
-import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.column.DBColumn;
-import ch.epfl.dias.store.row.DBTuple;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 import java.util.Iterator;
 
 public class Join implements VectorOperator {
 
-	// TODO: Add required structures
 	private VectorOperator leftChild;
 	private VectorOperator rightChild;
 	private int leftFieldNo;
 	private int rightFieldNo;
 	private ArrayList<DBColumn[]> leftVector;
+	private ArrayList<Hashtable<Integer, ArrayList<Integer>>> leftHtable;
 	private Iterator<DBColumn[]> leftIterator;
+	private Iterator<Hashtable<Integer, ArrayList<Integer>>> leftHtableIterator;
 	private DBColumn[] currentRightVector;
 
-
 	public Join(VectorOperator leftChild, VectorOperator rightChild, int leftFieldNo, int rightFieldNo) {
-		// TODO: Implement
 		this.leftChild = leftChild;
 		this.rightChild = rightChild;
 		this.leftFieldNo = leftFieldNo;
 		this.rightFieldNo = rightFieldNo;
-		this.leftVector = new ArrayList<DBColumn[]>();		
+		this.leftVector = new ArrayList<DBColumn[]>();
+		this.leftHtable = new ArrayList<Hashtable<Integer, ArrayList<Integer>>>();		
 	}
 
 	@Override
 	public void open() {
-		// TODO: Implement
 		leftChild.open();
 		rightChild.open();
 		DBColumn[] currentLeftVector = leftChild.next();
 		while(currentLeftVector!=null){
+			Hashtable<Integer, ArrayList<Integer>> hTable = new Hashtable<Integer, ArrayList<Integer>>();
+			int index = 0;
+			for (Integer val: currentLeftVector[leftFieldNo].getAsInteger()){
+				try{
+					hTable.get(val).add(index);
+				}
+				catch(NullPointerException e){
+					hTable.put(val, new ArrayList<Integer>());
+					hTable.get(val).add(index);
+				}
+				index++;
+			}
+			leftHtable.add(hTable);
 			leftVector.add(currentLeftVector);
 			currentLeftVector = leftChild.next();			
 		}
 		leftIterator = leftVector.iterator();
+		leftHtableIterator = leftHtable.iterator();
 		currentRightVector = rightChild.next();
 	}
 
 	@Override
 	public DBColumn[] next() {
-		// TODO: Implement
 
 		DBColumn[] currentLeftVector  = null;
+		Hashtable<Integer, ArrayList<Integer>> currentLeftHTable = new Hashtable<Integer, ArrayList<Integer>>();
 
-		if(leftIterator.hasNext()){
-			currentLeftVector = leftIterator.next();
-		}
-		else{
+		if(!leftIterator.hasNext()){
 			currentRightVector = rightChild.next();
 			leftIterator = leftVector.iterator();
-			currentLeftVector = leftIterator.next();
+			leftHtableIterator = leftHtable.iterator();
 		}
+
+		currentLeftVector = leftIterator.next();
+		currentLeftHTable = leftHtableIterator.next();
 
 		if(currentRightVector==null){
 			return null;
 		}
 		else{
-			Hashtable<Integer, ArrayList<Integer>> leftHtable = new Hashtable<Integer, ArrayList<Integer>>();
 			Hashtable<Integer, ArrayList<Integer>> rightHtable = new Hashtable<Integer, ArrayList<Integer>>();
 			ArrayList<Integer> leftMatchingEntries = new ArrayList<Integer>();
 			ArrayList<Integer> rightMatchingEntries = new ArrayList<Integer>();
 
-			int index = 0;
-			for (Integer val: currentLeftVector[leftFieldNo].getAsInteger()){
-				try{
-					leftHtable.get(val).add(index);
-				}
-				catch(NullPointerException e){
-					leftHtable.put(val, new ArrayList<Integer>());
-					leftHtable.get(val).add(index);
-				}
-				index++;
-			}
-
 			/*
 				Form list of Right elements
 			*/
-			index = 0;
+			int index = 0;
 			for (Integer val: currentRightVector[rightFieldNo].getAsInteger()){
 				try{
-					ArrayList<Integer> matchingLeft = leftHtable.get(val);
+					ArrayList<Integer> matchingLeft = currentLeftHTable.get(val);
 					if (matchingLeft!=null){
 						for(int i=0;i<matchingLeft.size();i++){
 							rightMatchingEntries.add(index);
@@ -176,7 +169,6 @@ public class Join implements VectorOperator {
 
 	@Override
 	public void close() {
-		// TODO: Implement
 		leftChild.close();
 		rightChild.close();
 	}

@@ -2,13 +2,10 @@ package ch.epfl.dias.ops.vector;
 
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.store.DataType;
-import ch.epfl.dias.store.Store;
 import ch.epfl.dias.store.column.DBColumn;
-import ch.epfl.dias.store.row.DBTuple;
 
 public class ProjectAggregate implements VectorOperator {
 
-	// TODO: Add required structures
 	private VectorOperator child;
 	private Aggregate agg;
 	private int fieldNo;
@@ -17,15 +14,12 @@ public class ProjectAggregate implements VectorOperator {
 	private Integer minInt;
 	private Integer maxInt;
 	private Integer countInt;
-	private Integer resultInt;
 	private Double sumDoub;
 	private Double minDoub;
 	private Double maxDoub;
 	private Double countDoub;
-	private Double resultDoub;
 
 	public ProjectAggregate(VectorOperator child, Aggregate agg, DataType dt, int fieldNo) {
-		// TODO: Implement
 		this.child = child;
 		this.agg = agg;
 		this.dt = dt;
@@ -42,7 +36,6 @@ public class ProjectAggregate implements VectorOperator {
 
 	@Override
 	public void open() {
-		// TODO: Implement
 		child.open();
 		DBColumn[] currentVector = child.next();
 		while(currentVector != null){
@@ -155,7 +148,6 @@ public class ProjectAggregate implements VectorOperator {
 
 	@Override
 	public void close() {
-		// TODO: Implement
 		child.close();
 	}
 

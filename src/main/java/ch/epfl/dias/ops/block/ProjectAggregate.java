@@ -6,22 +6,12 @@ import ch.epfl.dias.store.column.DBColumn;
 
 public class ProjectAggregate implements BlockOperator {
 
-	// TODO: Add required structures
-	public BlockOperator child;
+	private BlockOperator child;
 	private Aggregate agg;
 	private DataType dt;
 	private int fieldNo;
-	private Integer sumInt;
-	private Integer maxInt;
-	private Integer minInt;
-	private Integer countInt;
-	private Double sumDoub;
-	private Double maxDoub;
-	private Double minDoub;
-	private Double countDoub;
-	
+
 	public ProjectAggregate(BlockOperator child, Aggregate agg, DataType dt, int fieldNo) {
-		// TODO: Implement
 		this.child = child;
 		this.agg = agg;
 		this.dt = dt;
@@ -30,16 +20,21 @@ public class ProjectAggregate implements BlockOperator {
 
 	@Override
 	public DBColumn[] execute() {
-		// TODO: Implement
+		Integer sumInt = new Integer(0);
+		Integer maxInt = new Integer(Integer.MAX_VALUE);
+		Integer minInt = new Integer(Integer.MIN_VALUE);
+		Integer countInt = new Integer(0);
+		Double sumDoub = new Double(0);
+		Double maxDoub = new Double(Double.MAX_VALUE);
+		Double minDoub = new Double(Double.MIN_VALUE);
+		Double countDoub = new Double(0);
+
 		DBColumn[] childBlock = child.execute();
 		Object result = null;
 		switch(childBlock[fieldNo].getDataType()){
 			case INT:
 				Integer[] blockAsInt = childBlock[fieldNo].getAsInteger();
-				sumInt = new Integer(0);
-				maxInt = new Integer(Integer.MAX_VALUE);
-				minInt = new Integer(Integer.MIN_VALUE);
-				countInt = new Integer(blockAsInt.length);
+				countInt = blockAsInt.length;
 				for(Integer val: blockAsInt){
 					sumInt += val;
 					maxInt = getMax(maxInt, val);
@@ -48,10 +43,7 @@ public class ProjectAggregate implements BlockOperator {
 				break;
 			case DOUBLE:
 				Double[] blockAsDouble = childBlock[fieldNo].getAsDouble();
-				sumDoub = new Double(0);
-				maxDoub = new Double(Double.MAX_VALUE);
-				minDoub = new Double(Double.MIN_VALUE);
-				countDoub = new Double(blockAsDouble.length);
+				countDoub = (Double)((Object)blockAsDouble.length);
 				for(Double val: blockAsDouble){
 					sumDoub += val;
 					maxDoub = getMax(maxDoub, val);

@@ -7,14 +7,12 @@ import java.util.ArrayList;
 
 public class Select implements VectorOperator {
 
-	// TODO: Add required structures
 	private VectorOperator child;
 	private BinaryOp op;
 	private int fieldNo;
 	private int value;
 
 	public Select(VectorOperator child, BinaryOp op, int fieldNo, int value) {
-		// TODO: Implement
 		this.child = child;
 		this.op = op;
 		this.fieldNo = fieldNo;
@@ -23,13 +21,11 @@ public class Select implements VectorOperator {
 	
 	@Override
 	public void open() {
-		// TODO: Implement
 		child.open();
 	}
 
 	@Override
 	public DBColumn[] next() {
-		// TODO: Implement
 		DBColumn[] childVector = child.next();
 		if(childVector==null){
 			return null;
@@ -107,7 +103,6 @@ public class Select implements VectorOperator {
 
 	@Override
 	public void close() {
-		// TODO: Implement
 		child.close();
 	}
 }

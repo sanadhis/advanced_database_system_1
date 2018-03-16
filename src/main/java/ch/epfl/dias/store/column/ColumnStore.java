@@ -1,8 +1,6 @@
 package ch.epfl.dias.store.column;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,7 +8,6 @@ import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.Store;
 
 import java.util.ArrayList;
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -18,14 +15,12 @@ import java.util.List;
 
 public class ColumnStore extends Store {
 
-	// TODO: Add required structures
 	private DataType[] schema;
 	private String filename;
 	private String delimiter;
 	private ArrayList<DBColumn> relationColumn;
 
 	public ColumnStore(DataType[] schema, String filename, String delimiter) {
-		// TODO: Implement
 		this.schema = schema;
 		this.filename = filename;
 		this.delimiter = delimiter;
@@ -38,7 +33,6 @@ public class ColumnStore extends Store {
 
 	@Override
 	public void load() {
-		// TODO: Implement
 		String projectPath = System.getProperty("user.dir");
 		Path pathToFile = Paths.get(projectPath + "/" +filename);
 		try {

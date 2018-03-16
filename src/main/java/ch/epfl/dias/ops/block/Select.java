@@ -3,19 +3,15 @@ package ch.epfl.dias.ops.block;
 import java.util.ArrayList;
 import ch.epfl.dias.ops.BinaryOp;
 import ch.epfl.dias.store.column.DBColumn;
-import ch.epfl.dias.store.DataType;;
 
 public class Select implements BlockOperator {
 
-	// TODO: Add required structures
 	private BlockOperator child;
 	private BinaryOp op;
 	private int fieldNo;
 	private int value;
-	private DBColumn currentBlock;
 
 	public Select(BlockOperator child, BinaryOp op, int fieldNo, int value) {
-		// TODO: Implement
 		this.child = child;
 		this.op = op;
 		this.fieldNo = fieldNo;
@@ -24,10 +20,8 @@ public class Select implements BlockOperator {
 
 	@Override
 	public DBColumn[] execute() {
-		// TODO: Implement
 		DBColumn[] childBlock = child.execute();
 		DBColumn[] newBlockResult = new DBColumn[childBlock.length];
-		ArrayList<DBColumn> selectionResult = new ArrayList<DBColumn>();
 		ArrayList<Integer> selectionIndex = new ArrayList<Integer>();
 		int index = 0;
 		for (Integer val: childBlock[fieldNo].getAsInteger()){

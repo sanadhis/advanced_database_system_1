@@ -15,14 +15,12 @@ import java.io.InputStreamReader;
 
 public class RowStore extends Store {
 
-	// TODO: Add required structures
 	private DataType[] schema;
 	private String filename;
 	private String delimiter;
 	private ArrayList<DBTuple> relationTuple;
 
 	public RowStore(DataType[] schema, String filename, String delimiter) {
-		// TODO: Implement
 		this.schema = schema;
 		this.filename = filename;
 		this.delimiter = delimiter;
@@ -31,7 +29,6 @@ public class RowStore extends Store {
 
 	@Override
 	public void load() {
-		// TODO: Implement
 		String projectPath = System.getProperty("user.dir");
 		Path pathToFile = Paths.get(projectPath + "/" +filename);
 		try {

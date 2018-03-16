@@ -5,7 +5,6 @@ import ch.epfl.dias.store.column.DBColumn;
 
 public class Scan implements VectorOperator {
 
-	// TODO: Add required structures
 	private Store store;
 	private int vectorSize;
 	private int vectorIndex;
@@ -13,7 +12,6 @@ public class Scan implements VectorOperator {
 	private boolean eofFlag;
 
 	public Scan(Store store, int vectorSize) {
-		// TODO: Implement
 		this.store = store;
 		this.vectorSize = vectorSize;
 		this.allColumns = null;
@@ -22,7 +20,6 @@ public class Scan implements VectorOperator {
 	
 	@Override
 	public void open() {
-		// TODO: Implement
 		vectorIndex = 0;
 		allColumns = store.getColumns(new int[]{});
 	}
@@ -72,7 +69,6 @@ public class Scan implements VectorOperator {
 
 	@Override
 	public void close() {
-		// TODO: Implement
 		vectorIndex = 0;
 		store = null;
 	}

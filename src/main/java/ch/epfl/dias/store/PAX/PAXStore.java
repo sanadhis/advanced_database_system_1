@@ -1,8 +1,6 @@
 package ch.epfl.dias.store.PAX;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,12 +12,9 @@ import ch.epfl.dias.store.row.DBTuple;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.util.List;
-
 
 public class PAXStore extends Store {
 
-	// TODO: Add required structures
 	private DataType[] schema;
 	private String filename;
 	private String delimiter;
@@ -27,7 +22,6 @@ public class PAXStore extends Store {
 	private ArrayList<DBPAXpage> paxPages;
 
 	public PAXStore(DataType[] schema, String filename, String delimiter, int tuplesPerPage) {
-		// TODO: Implement
 		this.schema = schema;
 		this.filename = filename;
 		this.delimiter = delimiter;
@@ -37,7 +31,6 @@ public class PAXStore extends Store {
 
 	@Override
 	public void load() {
-		// TODO: Implement
 		String projectPath = System.getProperty("user.dir");
 		Path pathToFile = Paths.get(projectPath + "/" +filename);
 

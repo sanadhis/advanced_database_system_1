@@ -1,45 +1,30 @@
 package ch.epfl.dias.ops.block;
 
-import ch.epfl.dias.ops.BinaryOp;
-import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.column.DBColumn;
-import ch.epfl.dias.store.row.DBTuple;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-import java.util.Iterator;
 
 public class Join implements BlockOperator {
 
-	// TODO: Add required structures
 	private BlockOperator leftChild;
 	private BlockOperator rightChild;
 	private int leftFieldNo;
 	private int rightFieldNo;
-	private Hashtable<Integer, ArrayList<Integer>> leftHtable;
-	private Hashtable<Integer, ArrayList<Integer>> rightHtable;
-	private ArrayList<Integer> leftMatchingEntries;
-	private ArrayList<Integer> rightMatchingEntries;
 
 	public Join(BlockOperator leftChild, BlockOperator rightChild, int leftFieldNo, int rightFieldNo) {
-		// TODO: Implement
 		this.leftChild = leftChild;
 		this.rightChild = rightChild;
 		this.leftFieldNo = leftFieldNo;
 		this.rightFieldNo = rightFieldNo;
-		this.leftHtable = new Hashtable<Integer, ArrayList<Integer>>();
-		this.rightHtable = new Hashtable<Integer, ArrayList<Integer>>();
-		this.leftMatchingEntries = new ArrayList<Integer>();
-		this.rightMatchingEntries = new ArrayList<Integer>();
-
 	}
 
 	public DBColumn[] execute() {
-		// TODO: Implement
+		Hashtable<Integer, ArrayList<Integer>> leftHtable = new Hashtable<Integer, ArrayList<Integer>>();
+		Hashtable<Integer, ArrayList<Integer>> rightHtable = new Hashtable<Integer, ArrayList<Integer>>();
+		ArrayList<Integer> leftMatchingEntries = new ArrayList<Integer>();
+		ArrayList<Integer> rightMatchingEntries = new ArrayList<Integer>();
+
 		DBColumn[] leftChildBlock = leftChild.execute();
 		DBColumn[] rightChildBlock = rightChild.execute();
 		
