@@ -62,23 +62,33 @@ public class ProjectAggregate implements VolcanoOperator {
 		switch (currentTuple.types[fieldNo]) {
 		case INT:
 			Integer currentValueInt = currentTuple.getFieldAsInt(fieldNo);
-			countInt += 1;
-			sumInt += currentValueInt;
-			minInt = getMin(minInt, currentValueInt);
-			maxInt = getMax(maxInt, currentValueInt);
+			if (currentValueInt != null) {
+				countInt += 1;
+				sumInt += currentValueInt;
+				minInt = getMin(minInt, currentValueInt);
+				maxInt = getMax(maxInt, currentValueInt);
+			}
 			break;
 		case DOUBLE:
 			Double currentValueDouble = currentTuple.getFieldAsDouble(fieldNo);
-			countDoub += 1;
-			sumDoub += currentValueDouble;
-			minDoub = getMin(minDoub, currentValueDouble);
-			maxDoub = getMax(maxDoub, currentValueDouble);
+			if (currentValueDouble != null) {
+				countDoub += 1;
+				sumDoub += currentValueDouble;
+				minDoub = getMin(minDoub, currentValueDouble);
+				maxDoub = getMax(maxDoub, currentValueDouble);
+			}
 			break;
 		case BOOLEAN:
-			countInt += 1;
+			Boolean currentValueBoolean = currentTuple.getFieldAsBoolean(fieldNo);
+			if (currentValueBoolean != null) {
+				countInt += 1;
+			}
 			break;
 		case STRING:
-			countInt += 1;
+			String currentValueString = currentTuple.getFieldAsString(fieldNo);
+			if (currentValueString != null) {
+				countInt += 1;
+			}
 			break;
 		}
 	}

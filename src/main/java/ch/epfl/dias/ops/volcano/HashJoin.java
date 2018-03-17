@@ -89,11 +89,13 @@ public class HashJoin implements VolcanoOperator {
 
 	public void buildHashTable(DBTuple currentTuple, int fieldNo) {
 		Integer fieldValue = currentTuple.getFieldAsInt(fieldNo);
-		try {
-			htable.get(fieldValue).add(currentTuple);
-		} catch (NullPointerException e) {
-			htable.put(fieldValue, new ArrayList<DBTuple>());
-			htable.get(fieldValue).add(currentTuple);
+		if (fieldValue != null) {
+			try {
+				htable.get(fieldValue).add(currentTuple);
+			} catch (NullPointerException e) {
+				htable.put(fieldValue, new ArrayList<DBTuple>());
+				htable.get(fieldValue).add(currentTuple);
+			}
 		}
 	}
 
