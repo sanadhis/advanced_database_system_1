@@ -20,6 +20,13 @@ public class ProjectAggregate implements BlockOperator {
 
 	@Override
 	public DBColumn[] execute() {
+		DBColumn[] childBlock = child.execute();
+		Object result = aggregate(childBlock, fieldNo);
+
+		return new DBColumn[] { new DBColumn(new Object[] { result }, dt) };
+	}
+
+	public Object aggregate(DBColumn[] block, int fieldNo) {
 		Integer sumInt = new Integer(0);
 		Integer maxInt = new Integer(Integer.MAX_VALUE);
 		Integer minInt = new Integer(Integer.MIN_VALUE);
@@ -29,11 +36,9 @@ public class ProjectAggregate implements BlockOperator {
 		Double minDoub = new Double(Double.MIN_VALUE);
 		Double countDoub = new Double(0);
 
-		DBColumn[] childBlock = child.execute();
-		Object result = null;
-		switch (childBlock[fieldNo].getDataType()) {
+		switch (block[fieldNo].getDataType()) {
 		case INT:
-			Integer[] blockAsInt = childBlock[fieldNo].getAsInteger();
+			Integer[] blockAsInt = block[fieldNo].getAsInteger();
 			countInt = blockAsInt.length;
 			for (Integer val : blockAsInt) {
 				sumInt += val;
@@ -42,7 +47,7 @@ public class ProjectAggregate implements BlockOperator {
 			}
 			break;
 		case DOUBLE:
-			Double[] blockAsDouble = childBlock[fieldNo].getAsDouble();
+			Double[] blockAsDouble = block[fieldNo].getAsDouble();
 			countDoub = (Double) ((Object) blockAsDouble.length);
 			for (Double val : blockAsDouble) {
 				sumDoub += val;
@@ -51,11 +56,11 @@ public class ProjectAggregate implements BlockOperator {
 			}
 			break;
 		case STRING:
-			String[] blockAsStrings = childBlock[fieldNo].getAsString();
+			String[] blockAsStrings = block[fieldNo].getAsString();
 			countInt = new Integer(blockAsStrings.length);
 			break;
 		case BOOLEAN:
-			Boolean[] blockAsBoolean = childBlock[fieldNo].getAsBoolean();
+			Boolean[] blockAsBoolean = block[fieldNo].getAsBoolean();
 			countInt = new Integer(blockAsBoolean.length);
 			break;
 		}
@@ -64,44 +69,36 @@ public class ProjectAggregate implements BlockOperator {
 		case INT:
 			switch (agg) {
 			case COUNT:
-				result = countInt;
-				break;
+				return countInt;
 			case SUM:
-				result = sumInt;
-				break;
+				return sumInt;
 			case MAX:
-				result = maxInt;
-				break;
+				return maxInt;
 			case MIN:
-				result = minInt;
-				break;
+				return minInt;
 			case AVG:
-				result = sumInt / countInt;
-				break;
+				return sumInt / countInt;
+			default:
+				return null;
 			}
-			break;
 		case DOUBLE:
 			switch (agg) {
 			case COUNT:
-				result = countDoub;
-				break;
+				return countDoub;
 			case SUM:
-				result = sumDoub;
-				break;
+				return sumDoub;
 			case MAX:
-				result = maxDoub;
-				break;
+				return maxDoub;
 			case MIN:
-				result = minDoub;
-				break;
+				return minDoub;
 			case AVG:
-				result = sumDoub / countDoub;
-				break;
+				return sumDoub / countDoub;
+			default:
+				return null;
 			}
-			break;
+		default:
+			return null;
 		}
-
-		return new DBColumn[] { new DBColumn(new Object[] { result }, dt) };
 	}
 
 	public Double getMin(Double a, Double b) {

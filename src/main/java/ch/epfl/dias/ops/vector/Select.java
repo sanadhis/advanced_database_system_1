@@ -31,7 +31,6 @@ public class Select implements VectorOperator {
 			return null;
 		} else {
 			DBColumn[] vectorSelection = new DBColumn[childVector.length];
-			ArrayList<DBColumn> selectionResult = new ArrayList<DBColumn>();
 			ArrayList<Integer> selectionIndex = new ArrayList<Integer>();
 			int index = 0;
 			for (Integer val : childVector[fieldNo].getAsInteger()) {

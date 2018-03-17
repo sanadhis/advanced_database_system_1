@@ -15,10 +15,10 @@ public class ProjectAggregate implements VolcanoOperator {
 	private Integer minInt;
 	private Integer maxInt;
 	private Integer countInt;
-	private Double sumDouble;
-	private Double minDouble;
-	private Double maxDouble;
-	private Double countDouble;
+	private Double sumDoub;
+	private Double minDoub;
+	private Double maxDoub;
+	private Double countDoub;
 
 	public ProjectAggregate(VolcanoOperator child, Aggregate agg, DataType dt, int fieldNo) {
 		this.child = child;
@@ -29,10 +29,10 @@ public class ProjectAggregate implements VolcanoOperator {
 		this.minInt = new Integer(Integer.MAX_VALUE);
 		this.maxInt = new Integer(Integer.MIN_VALUE);
 		this.countInt = new Integer(0);
-		this.sumDouble = new Double(0);
-		this.minDouble = new Double(Double.MAX_VALUE);
-		this.maxDouble = new Double(Double.MIN_VALUE);
-		this.countDouble = new Double(0);
+		this.sumDoub = new Double(0);
+		this.minDoub = new Double(Double.MAX_VALUE);
+		this.maxDoub = new Double(Double.MIN_VALUE);
+		this.countDoub = new Double(0);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class ProjectAggregate implements VolcanoOperator {
 
 	@Override
 	public DBTuple next() {
-		Object result = aggregateResult(dt, agg);
+		Object result = getAggregateResult(dt, agg);
 		return new DBTuple(new Object[] { result }, new DataType[] { dt });
 	}
 
@@ -69,10 +69,10 @@ public class ProjectAggregate implements VolcanoOperator {
 			break;
 		case DOUBLE:
 			Double currentValueDouble = currentTuple.getFieldAsDouble(fieldNo);
-			countDouble += 1;
-			sumDouble += currentValueDouble;
-			minDouble = getMin(minDouble, currentValueDouble);
-			maxDouble = getMax(maxDouble, currentValueDouble);
+			countDoub += 1;
+			sumDoub += currentValueDouble;
+			minDoub = getMin(minDoub, currentValueDouble);
+			maxDoub = getMax(maxDoub, currentValueDouble);
 			break;
 		case BOOLEAN:
 			countInt += 1;
@@ -83,7 +83,7 @@ public class ProjectAggregate implements VolcanoOperator {
 		}
 	}
 
-	public Object aggregateResult(DataType type, Aggregate aggregationType) {
+	public Object getAggregateResult(DataType type, Aggregate aggregationType) {
 		switch (type) {
 		case INT:
 			switch (aggregationType) {
@@ -103,15 +103,15 @@ public class ProjectAggregate implements VolcanoOperator {
 		case DOUBLE:
 			switch (agg) {
 			case COUNT:
-				return countDouble;
+				return countDoub;
 			case SUM:
-				return sumDouble;
+				return sumDoub;
 			case MAX:
-				return maxDouble;
+				return maxDoub;
 			case MIN:
-				return minDouble;
+				return minDoub;
 			case AVG:
-				return sumDouble / countDouble;
+				return sumDoub / countDoub;
 			default:
 				return null;
 			}

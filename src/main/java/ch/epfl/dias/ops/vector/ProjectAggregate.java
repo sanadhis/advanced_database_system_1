@@ -39,108 +39,108 @@ public class ProjectAggregate implements VectorOperator {
 		child.open();
 		DBColumn[] currentVector = child.next();
 		while (currentVector != null) {
-			switch (currentVector[fieldNo].getDataType()) {
-			case INT:
-				Integer[] vectorAsInt = currentVector[fieldNo].getAsInteger();
-				for (Integer val : vectorAsInt) {
-					try {
-						sumInt += val;
-						maxInt = getMax(maxInt, val);
-						minInt = getMin(minInt, val);
-						countInt++;
-					} catch (NullPointerException e) {
-						break;
-					}
-				}
-				break;
-			case DOUBLE:
-				Double[] vectorAsDouble = currentVector[fieldNo].getAsDouble();
-				for (Double val : vectorAsDouble) {
-					try {
-						sumDoub += val;
-						maxDoub = getMax(maxDoub, val);
-						minDoub = getMin(minDoub, val);
-						countDoub++;
-					} catch (NullPointerException e) {
-						break;
-					}
-				}
-				break;
-			case STRING:
-				String[] vectorAsStrings = currentVector[fieldNo].getAsString();
-				for (String str : vectorAsStrings) {
-					if (str == null) {
-						break;
-					} else {
-						countInt++;
-					}
-				}
-				break;
-			case BOOLEAN:
-				Boolean[] vectorAsBoolean = currentVector[fieldNo].getAsBoolean();
-				for (Boolean bool : vectorAsBoolean) {
-					if (bool == null) {
-						break;
-					} else {
-						countInt++;
-					}
-				}
-				break;
-			}
+			aggregate(currentVector, fieldNo);
 			currentVector = child.next();
 		}
 	}
 
 	@Override
 	public DBColumn[] next() {
-		Object result = null;
-		switch (dt) {
-		case INT:
-			switch (agg) {
-			case COUNT:
-				result = countInt;
-				break;
-			case SUM:
-				result = sumInt;
-				break;
-			case MAX:
-				result = maxInt;
-				break;
-			case MIN:
-				result = minInt;
-				break;
-			case AVG:
-				result = sumInt / countInt;
-				break;
-			}
-			break;
-		case DOUBLE:
-			switch (agg) {
-			case COUNT:
-				result = countDoub;
-				break;
-			case SUM:
-				result = sumDoub;
-				break;
-			case MAX:
-				result = maxDoub;
-				break;
-			case MIN:
-				result = minDoub;
-				break;
-			case AVG:
-				result = sumDoub / countDoub;
-				break;
-			}
-			break;
-		}
-
+		Object result = getAggregateResult(dt, agg);
 		return new DBColumn[] { new DBColumn(new Object[] { result }, dt) };
 	}
 
 	@Override
 	public void close() {
 		child.close();
+	}
+
+	public void aggregate(DBColumn[] vector, int fieldNo) {
+		switch (vector[fieldNo].getDataType()) {
+		case INT:
+			Integer[] vectorAsInt = vector[fieldNo].getAsInteger();
+			for (Integer val : vectorAsInt) {
+				try {
+					sumInt += val;
+					maxInt = getMax(maxInt, val);
+					minInt = getMin(minInt, val);
+					countInt++;
+				} catch (NullPointerException e) {
+					break;
+				}
+			}
+			break;
+		case DOUBLE:
+			Double[] vectorAsDouble = vector[fieldNo].getAsDouble();
+			for (Double val : vectorAsDouble) {
+				try {
+					sumDoub += val;
+					maxDoub = getMax(maxDoub, val);
+					minDoub = getMin(minDoub, val);
+					countDoub++;
+				} catch (NullPointerException e) {
+					break;
+				}
+			}
+			break;
+		case STRING:
+			String[] vectorAsStrings = vector[fieldNo].getAsString();
+			for (String str : vectorAsStrings) {
+				if (str == null) {
+					break;
+				} else {
+					countInt++;
+				}
+			}
+			break;
+		case BOOLEAN:
+			Boolean[] vectorAsBoolean = vector[fieldNo].getAsBoolean();
+			for (Boolean bool : vectorAsBoolean) {
+				if (bool == null) {
+					break;
+				} else {
+					countInt++;
+				}
+			}
+			break;
+		}
+	}
+
+	public Object getAggregateResult(DataType type, Aggregate aggregationType) {
+		switch (type) {
+		case INT:
+			switch (aggregationType) {
+			case COUNT:
+				return countInt;
+			case SUM:
+				return sumInt;
+			case MAX:
+				return maxInt;
+			case MIN:
+				return minInt;
+			case AVG:
+				return sumInt / countInt;
+			default:
+				return null;
+			}
+		case DOUBLE:
+			switch (agg) {
+			case COUNT:
+				return countDoub;
+			case SUM:
+				return sumDoub;
+			case MAX:
+				return maxDoub;
+			case MIN:
+				return minDoub;
+			case AVG:
+				return sumDoub / countDoub;
+			default:
+				return null;
+			}
+		default:
+			return null;
+		}
 	}
 
 	public Double getMin(Double a, Double b) {
