@@ -22,7 +22,7 @@ public class Select implements BlockOperator {
 	public DBColumn[] execute() {
 		DBColumn[] childBlock = child.execute();
 		DBColumn[] blockResults = new DBColumn[childBlock.length];
-		ArrayList<Integer> selectedIndex = getIndexBySelection(childBlock[fieldNo]);
+		ArrayList<Integer> selectedIndex = getIndexBySelection(childBlock[fieldNo], value);
 		int index = 0;
 		for (DBColumn block : childBlock) {
 			Object[] selectedPerBlock = selectPerBlock(block, selectedIndex);
@@ -32,38 +32,38 @@ public class Select implements BlockOperator {
 		return blockResults;
 	}
 
-	public ArrayList<Integer> getIndexBySelection(DBColumn block){
+	public ArrayList<Integer> getIndexBySelection(DBColumn block, int selectionValue){
 		int index = 0;
 		ArrayList<Integer> selectedIndex = new ArrayList<Integer>();
-		for (Integer val : block.getAsInteger()) {
+		for (Integer currentValue : block.getAsInteger()) {
 			switch (op) {
 			case LT:
-				if (val < value) {
+				if (currentValue < selectionValue) {
 					selectedIndex.add(index);
 				}
 				break;
 			case LE:
-				if (val <= value) {
+				if (currentValue <= selectionValue) {
 					selectedIndex.add(index);
 				}
 				break;
 			case EQ:
-				if (val == value) {
+				if (currentValue == selectionValue) {
 					selectedIndex.add(index);
 				}
 				break;
 			case NE:
-				if (val != value) {
+				if (currentValue != selectionValue) {
 					selectedIndex.add(index);
 				}
 				break;
 			case GT:
-				if (val > value) {
+				if (currentValue > selectionValue) {
 					selectedIndex.add(index);
 				}
 				break;
 			case GE:
-				if (val >= value) {
+				if (currentValue >= selectionValue) {
 					selectedIndex.add(index);
 				}
 				break;
