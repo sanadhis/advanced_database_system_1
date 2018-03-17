@@ -397,7 +397,7 @@ public class RowVolcano {
 	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
         ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.LT, 4, 30);
         ch.epfl.dias.ops.volcano.Project proj = new Project(selOrder, new int[]{0});
-	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.AVG, DataType.INT, 0);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.AVG, DataType.DOUBLE, 0);
 	
 		agg.open();
 		
@@ -443,7 +443,7 @@ public class RowVolcano {
 	    ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scanOrder, BinaryOp.GE, 1, 1000000);
 
 	    ch.epfl.dias.ops.volcano.HashJoin join = new ch.epfl.dias.ops.volcano.HashJoin(selOrder ,scanLineitem,0,0);
-	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join, Aggregate.AVG, DataType.INT, 1);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join, Aggregate.AVG, DataType.DOUBLE, 1);
     
 		agg.open();
 		
