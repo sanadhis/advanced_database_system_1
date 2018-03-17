@@ -70,16 +70,16 @@ public class HashJoin implements VolcanoOperator {
 		rightChild.close();
 	}
 
-	public DBTuple joinTuple(DBTuple tuple1, DBTuple tuple2){
-		Object[] tupleFields = new Object[tuple1.fields.length+ tuple2.fields.length];
-		DataType[] tupleTypes = new DataType[tuple1.types.length+ tuple2.types.length];
+	public DBTuple joinTuple(DBTuple tuple1, DBTuple tuple2) {
+		Object[] tupleFields = new Object[tuple1.fields.length + tuple2.fields.length];
+		DataType[] tupleTypes = new DataType[tuple1.types.length + tuple2.types.length];
 		int index = 0;
-		for (int i=0;i<tuple1.fields.length;i++){
+		for (int i = 0; i < tuple1.fields.length; i++) {
 			tupleFields[index] = tuple1.fields[i];
 			tupleTypes[index] = tuple1.types[i];
 			index++;
 		}
-		for (int i=0;i<tuple2.fields.length;i++){
+		for (int i = 0; i < tuple2.fields.length; i++) {
 			tupleFields[index] = tuple2.fields[i];
 			tupleTypes[index] = tuple2.types[i];
 			index++;
@@ -98,10 +98,10 @@ public class HashJoin implements VolcanoOperator {
 	}
 
 	public void getHashKeysByValue(Integer value) {
-		try{
+		try {
 			matchingTuple = htable.get(value);
 			it = matchingTuple.iterator();
-		} catch (NullPointerException e){
+		} catch (NullPointerException e) {
 			it = Collections.emptyIterator();
 		}
 	}
