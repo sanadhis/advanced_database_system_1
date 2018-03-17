@@ -65,36 +65,48 @@ public class ProjectAggregate implements BlockOperator {
 			break;
 		}
 
-		switch (dt) {
-		case INT:
-			switch (agg) {
-			case COUNT:
+		switch (agg) {
+		case COUNT:
+			switch (dt) {
+			case INT:
 				return countInt;
-			case SUM:
-				return sumInt;
-			case MAX:
-				return maxInt;
-			case MIN:
-				return minInt;
-			case AVG:
-				return (Double)((double) sumInt / (double)countInt);
+			case DOUBLE:
+				return countDoub;
 			default:
 				return null;
 			}
-		case DOUBLE:
-			switch (agg) {
-			case COUNT:
-				return countDoub;
-			case SUM:
+		case SUM:
+			switch (dt) {
+			case INT:
+				return sumInt;
+			case DOUBLE:
 				return sumDoub;
-			case MAX:
-				return maxDoub;
-			case MIN:
-				return minDoub;
-			case AVG:
-				return sumDoub / countDoub;
 			default:
 				return null;
+			}
+		case MAX:
+			switch (dt) {
+			case INT:
+				return maxInt;
+			case DOUBLE:
+				return maxDoub;
+			default:
+				return null;
+			}
+		case MIN:
+			switch (dt) {
+			case INT:
+				return minInt;
+			case DOUBLE:
+				return minDoub;
+			default:
+				return null;
+			}
+		case AVG:
+			if (countInt != 0) {
+				return (Double) ((double) sumInt / (double) countInt);
+			} else {
+				return sumDoub / countDoub;
 			}
 		default:
 			return null;
