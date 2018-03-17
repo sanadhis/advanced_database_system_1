@@ -77,7 +77,7 @@ public class ProjectAggregate implements BlockOperator {
 			case MIN:
 				return minInt;
 			case AVG:
-				return sumInt / countInt;
+				return (Double)((double) sumInt / (double)countInt);
 			default:
 				return null;
 			}

@@ -119,7 +119,7 @@ public class ProjectAggregate implements VectorOperator {
 			case MIN:
 				return minInt;
 			case AVG:
-				return sumInt / countInt;
+				return (Double)((double) sumInt / (double)countInt);
 			default:
 				return null;
 			}

@@ -96,7 +96,7 @@ public class ProjectAggregate implements VolcanoOperator {
 			case MIN:
 				return minInt;
 			case AVG:
-				return sumInt / countInt;
+				return (Double)((double) sumInt / (double)countInt);
 			default:
 				return null;
 			}
