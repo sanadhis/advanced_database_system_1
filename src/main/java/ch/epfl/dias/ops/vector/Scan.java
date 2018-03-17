@@ -17,52 +17,49 @@ public class Scan implements VectorOperator {
 		this.allColumns = null;
 		this.eofFlag = false;
 	}
-	
+
 	@Override
 	public void open() {
 		vectorIndex = 0;
-		allColumns = store.getColumns(new int[]{});
+		allColumns = store.getColumns(new int[] {});
 	}
 
 	@Override
 	public DBColumn[] next() {
-		// TODO: Implement
-		if(eofFlag || vectorIndex>=allColumns.length-1){
+		if (eofFlag || vectorIndex >= allColumns.length - 1) {
 			return null;
-		}
-		else{
+		} else {
 			DBColumn[] nextVector = new DBColumn[allColumns.length];
 			int index = 0;
-			for(DBColumn column: allColumns){
+			for (DBColumn column : allColumns) {
 				Object[] result = null;
-				switch(column.getDataType()){
-					case INT:
-						result = column.getAsInteger();
-						break;
-					case DOUBLE:
-						result = column.getAsDouble();
-						break;
-					case STRING:
-						result = column.getAsString();
-						break;
-					case BOOLEAN:
-						result = column.getAsBoolean();
-						break;
+				switch (column.getDataType()) {
+				case INT:
+					result = column.getAsInteger();
+					break;
+				case DOUBLE:
+					result = column.getAsDouble();
+					break;
+				case STRING:
+					result = column.getAsString();
+					break;
+				case BOOLEAN:
+					result = column.getAsBoolean();
+					break;
 				}
 				Object[] blockResult = new Object[vectorSize];
-				for (int i=0; i<vectorSize; i++){
-					try{
-						blockResult[i] = result[vectorIndex+i];
-					}
-					catch(IndexOutOfBoundsException e){
+				for (int i = 0; i < vectorSize; i++) {
+					try {
+						blockResult[i] = result[vectorIndex + i];
+					} catch (IndexOutOfBoundsException e) {
 						blockResult[i] = null;
 						eofFlag = true;
 						break;
 					}
 				}
-				nextVector[index++] = new DBColumn(blockResult, column.getDataType());			
+				nextVector[index++] = new DBColumn(blockResult, column.getDataType());
 			}
-			vectorIndex += vectorSize;		
+			vectorIndex += vectorSize;
 			return nextVector;
 		}
 	}

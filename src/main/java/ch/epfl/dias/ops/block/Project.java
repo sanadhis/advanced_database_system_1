@@ -16,9 +16,9 @@ public class Project implements BlockOperator {
 	public DBColumn[] execute() {
 		DBColumn[] childBlock = childOperator.execute();
 		DBColumn[] results = new DBColumn[columns.length];
-		int index=0;
-		for (int column : columns){
-			results[index++] = childBlock[column];
+		int index = 0;
+		for (int columnToGet : columns) {
+			results[index++] = childBlock[columnToGet];
 		}
 		return results;
 	}

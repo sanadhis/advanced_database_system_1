@@ -22,7 +22,7 @@ public class Project implements VectorOperator {
 		DBColumn[] childVector = child.next();
 		DBColumn[] projectVector = new DBColumn[fieldNo.length];
 		int index = 0;
-		for(int columToGet: fieldNo){
+		for (int columToGet : fieldNo) {
 			projectVector[index++] = childVector[columToGet];
 		}
 		return projectVector;

@@ -24,65 +24,65 @@ public class Select implements BlockOperator {
 		DBColumn[] newBlockResult = new DBColumn[childBlock.length];
 		ArrayList<Integer> selectionIndex = new ArrayList<Integer>();
 		int index = 0;
-		for (Integer val: childBlock[fieldNo].getAsInteger()){
-			switch(op){
-				case LT:
-					if(val < value){
-						selectionIndex.add(index);
-					}
-					break;
-				case LE:
-					if(val <= value){
-						selectionIndex.add(index);
-					}
-					break;
-				case EQ:
-					if(val == value){
-						selectionIndex.add(index);
-					}
-					break;
-				case NE:
-					if(val != value){
-						selectionIndex.add(index);
-					}
-					break;
-				case GT:
-					if(val > value){
-						selectionIndex.add(index);
-					}
-					break;
-				case GE:
-					if(val >= value){
-						selectionIndex.add(index);
-					}
-					break;
+		for (Integer val : childBlock[fieldNo].getAsInteger()) {
+			switch (op) {
+			case LT:
+				if (val < value) {
+					selectionIndex.add(index);
+				}
+				break;
+			case LE:
+				if (val <= value) {
+					selectionIndex.add(index);
+				}
+				break;
+			case EQ:
+				if (val == value) {
+					selectionIndex.add(index);
+				}
+				break;
+			case NE:
+				if (val != value) {
+					selectionIndex.add(index);
+				}
+				break;
+			case GT:
+				if (val > value) {
+					selectionIndex.add(index);
+				}
+				break;
+			case GE:
+				if (val >= value) {
+					selectionIndex.add(index);
+				}
+				break;
 			}
-			index++;			
+			index++;
 		}
 		index = 0;
-		for(DBColumn block: childBlock){
+		for (DBColumn block : childBlock) {
 			Object[] result = null;
-			switch(block.getDataType()){
-				case INT:
-					result = block.getAsInteger();
-					break;
-				case DOUBLE:
-					result = block.getAsDouble();
-					break;
-				case STRING:
-					result = block.getAsString();
-					break;
-				case BOOLEAN:
-					result = block.getAsBoolean();
-					break;
+			switch (block.getDataType()) {
+			case INT:
+				result = block.getAsInteger();
+				break;
+			case DOUBLE:
+				result = block.getAsDouble();
+				break;
+			case STRING:
+				result = block.getAsString();
+				break;
+			case BOOLEAN:
+				result = block.getAsBoolean();
+				break;
 			}
 			Object[] blockResult = new Object[selectionIndex.size()];
-			for (int i=0;i<selectionIndex.size();i++){
+			for (int i = 0; i < selectionIndex.size(); i++) {
 				blockResult[i] = result[selectionIndex.get(i)];
 			}
 			newBlockResult[index++] = new DBColumn(blockResult, block.getDataType());
 		}
-		
+
 		return newBlockResult;
 	}
 }

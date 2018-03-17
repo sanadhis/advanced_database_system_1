@@ -31,115 +31,107 @@ public class ProjectAggregate implements BlockOperator {
 
 		DBColumn[] childBlock = child.execute();
 		Object result = null;
-		switch(childBlock[fieldNo].getDataType()){
-			case INT:
-				Integer[] blockAsInt = childBlock[fieldNo].getAsInteger();
-				countInt = blockAsInt.length;
-				for(Integer val: blockAsInt){
-					sumInt += val;
-					maxInt = getMax(maxInt, val);
-					minInt = getMin(minInt, val);
-				}
-				break;
-			case DOUBLE:
-				Double[] blockAsDouble = childBlock[fieldNo].getAsDouble();
-				countDoub = (Double)((Object)blockAsDouble.length);
-				for(Double val: blockAsDouble){
-					sumDoub += val;
-					maxDoub = getMax(maxDoub, val);
-					minDoub = getMin(minDoub, val);
-				}
-				break;
-			case STRING:
-				String[] blockAsStrings = childBlock[fieldNo].getAsString();
-				countInt = new Integer(blockAsStrings.length);
-				break;
-			case BOOLEAN:
-				Boolean[] blockAsBoolean = childBlock[fieldNo].getAsBoolean();
-				countInt = new Integer(blockAsBoolean.length);
-				break;
+		switch (childBlock[fieldNo].getDataType()) {
+		case INT:
+			Integer[] blockAsInt = childBlock[fieldNo].getAsInteger();
+			countInt = blockAsInt.length;
+			for (Integer val : blockAsInt) {
+				sumInt += val;
+				maxInt = getMax(maxInt, val);
+				minInt = getMin(minInt, val);
+			}
+			break;
+		case DOUBLE:
+			Double[] blockAsDouble = childBlock[fieldNo].getAsDouble();
+			countDoub = (Double) ((Object) blockAsDouble.length);
+			for (Double val : blockAsDouble) {
+				sumDoub += val;
+				maxDoub = getMax(maxDoub, val);
+				minDoub = getMin(minDoub, val);
+			}
+			break;
+		case STRING:
+			String[] blockAsStrings = childBlock[fieldNo].getAsString();
+			countInt = new Integer(blockAsStrings.length);
+			break;
+		case BOOLEAN:
+			Boolean[] blockAsBoolean = childBlock[fieldNo].getAsBoolean();
+			countInt = new Integer(blockAsBoolean.length);
+			break;
 		}
 
-		switch(dt){
-			case INT:
-				switch(agg){
-					case COUNT:
-						result = countInt;
-						break;
-					case SUM:
-						result = sumInt;
-						break;
-					case MAX:
-						result = maxInt;
-						break;
-					case MIN:
-						result = minInt;
-						break;
-					case AVG:
-						result = sumInt/countInt;
-						break;
-				}
+		switch (dt) {
+		case INT:
+			switch (agg) {
+			case COUNT:
+				result = countInt;
 				break;
-			case DOUBLE:
-				switch(agg){
-					case COUNT:
-						result = countDoub;
-						break;
-					case SUM:
-						result = sumDoub;
-						break;
-					case MAX:
-						result = maxDoub;
-						break;
-					case MIN:
-						result = minDoub;
-						break;
-					case AVG:
-						result = sumDoub/countDoub;
-						break;
-				}
+			case SUM:
+				result = sumInt;
 				break;
+			case MAX:
+				result = maxInt;
+				break;
+			case MIN:
+				result = minInt;
+				break;
+			case AVG:
+				result = sumInt / countInt;
+				break;
+			}
+			break;
+		case DOUBLE:
+			switch (agg) {
+			case COUNT:
+				result = countDoub;
+				break;
+			case SUM:
+				result = sumDoub;
+				break;
+			case MAX:
+				result = maxDoub;
+				break;
+			case MIN:
+				result = minDoub;
+				break;
+			case AVG:
+				result = sumDoub / countDoub;
+				break;
+			}
+			break;
 		}
-		
-		return new DBColumn[]{
-			new DBColumn(
-				new Object[]{result},dt
-				)
-			};
+
+		return new DBColumn[] { new DBColumn(new Object[] { result }, dt) };
 	}
 
-	public Double getMin(Double a, Double b){
-		if (a<b){
+	public Double getMin(Double a, Double b) {
+		if (a < b) {
 			return a;
-		}
-		else{
+		} else {
 			return b;
 		}
 	}
 
-	public Integer getMin(Integer a, Integer b){
-		if (a<b){
+	public Integer getMin(Integer a, Integer b) {
+		if (a < b) {
 			return a;
-		}
-		else{
+		} else {
 			return b;
 		}
 	}
 
-	public Double getMax(Double a, Double b){
-		if (a>b){
+	public Double getMax(Double a, Double b) {
+		if (a > b) {
 			return a;
-		}
-		else{
+		} else {
 			return b;
 		}
 	}
 
-	public Integer getMax(Integer a, Integer b){
-		if (a>b){
+	public Integer getMax(Integer a, Integer b) {
+		if (a > b) {
 			return a;
-		}
-		else{
+		} else {
 			return b;
 		}
 	}

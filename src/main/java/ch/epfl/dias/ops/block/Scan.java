@@ -13,6 +13,6 @@ public class Scan implements BlockOperator {
 
 	@Override
 	public DBColumn[] execute() {
-		return store.getColumns(new int[]{});
+		return store.getColumns(new int[] {});
 	}
 }

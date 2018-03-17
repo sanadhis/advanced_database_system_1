@@ -22,18 +22,20 @@ public class Project implements VolcanoOperator {
 	@Override
 	public DBTuple next() {
 		DBTuple currentTuple = child.next();
-		if (currentTuple.eof){
+		if (currentTuple.eof) {
 			return currentTuple;
-		}
-		Object[] selectedField = new Object[fieldNo.length];
-		DataType[] selectedDataType = new DataType[fieldNo.length];
-		int index = 0;
-		for(int attribute: fieldNo){
-			selectedField[index] = currentTuple.getFieldAsObject(attribute);
-			selectedDataType[index++] = currentTuple.types[attribute];
+		} else {
+			Object[] selectedField = new Object[fieldNo.length];
+			DataType[] selectedDataType = new DataType[fieldNo.length];
+			int index = 0;
+			for (int attribute : fieldNo) {
+				selectedField[index] = currentTuple.getFieldAsObject(attribute);
+				selectedDataType[index++] = currentTuple.types[attribute];
+			}
+
+			return new DBTuple(selectedField, selectedDataType);
 		}
 
-		return new DBTuple(selectedField, selectedDataType);
 	}
 
 	@Override

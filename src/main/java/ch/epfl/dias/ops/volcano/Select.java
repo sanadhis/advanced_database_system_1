@@ -27,60 +27,65 @@ public class Select implements VolcanoOperator {
 	public DBTuple next() {
 		DBTuple currentTuple = child.next();
 
-		if(currentTuple.eof){
+		if (currentTuple.eof) {
 			return currentTuple;
-		}
-
-		boolean selection=false;
-		try{
-			switch(op){
-				case LT:
-					if(currentTuple.getFieldAsInt(fieldNo) < value){
-						selection = true;
-					}
-					break;
-				case LE:
-					if(currentTuple.getFieldAsInt(fieldNo) <= value){
-						selection = true;
-					}
-					break;
-				case EQ:
-					if(currentTuple.getFieldAsInt(fieldNo) == value){
-						selection = true;
-					}
-					break;
-				case NE:
-					if(currentTuple.getFieldAsInt(fieldNo) != value){
-						selection = true;
-					}
-					break;
-				case GT:
-					if(currentTuple.getFieldAsInt(fieldNo) > value){
-						selection = true;
-					}
-					break;
-				case GE:
-					if(currentTuple.getFieldAsInt(fieldNo) >= value){
-						selection = true;
-					}
-					break;
+		} else {
+			boolean selectTuple;
+			try {
+				int currentTupleFieldValue = currentTuple.getFieldAsInt(fieldNo);
+				selectTuple = select(op, currentTupleFieldValue, value);
+			} catch (NullPointerException e) {
+				return new DBTuple();
 			}
-		}
-		catch(NullPointerException e){
-			return new DBTuple();
-		}
-		
-		if(selection){
-			return currentTuple;
-		}
-		else{
-			return this.next();
+
+			if (selectTuple) {
+				return currentTuple;
+			} else {
+				return this.next();
+			}
 		}
 	}
 
 	@Override
 	public void close() {
 		child.close();
+	}
+
+	public boolean select(BinaryOp op, int currentValue, int selectValue) {
+		switch (op) {
+		case LT:
+			if (currentValue < selectValue) {
+				return true;
+			}
+			return false;
+		case LE:
+			if (currentValue <= selectValue) {
+				return true;
+			}
+			return false;
+		case EQ:
+			if (currentValue == selectValue) {
+				return true;
+			}
+			return false;
+		case NE:
+			if (currentValue != selectValue) {
+				return true;
+			}
+			return false;
+		case GT:
+			if (currentValue > selectValue) {
+				return true;
+			}
+			return false;
+		case GE:
+			if (currentValue >= selectValue) {
+				return true;
+			}
+			return false;
+		default:
+			return false;
+		}
 	}
 
 }

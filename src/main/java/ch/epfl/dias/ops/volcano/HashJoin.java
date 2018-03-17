@@ -32,40 +32,30 @@ public class HashJoin implements VolcanoOperator {
 		leftChild.open();
 		rightChild.open();
 		DBTuple currentLeftTuple = leftChild.next();
-		while(!currentLeftTuple.eof){
-			Integer val = currentLeftTuple.getFieldAsInt(leftFieldNo);
-			try{
-				htable.get(val).add(currentLeftTuple);
-			}
-			catch(NullPointerException e){
-				htable.put(val, new ArrayList<DBTuple>());
-				htable.get(val).add(currentLeftTuple);
-			}
+		while (!currentLeftTuple.eof) {
+			buildHashTable(currentLeftTuple, leftFieldNo);
 			currentLeftTuple = leftChild.next();
 		}
 		currentTuple = rightChild.next();
 		Integer currentValue = currentTuple.getFieldAsInt(rightFieldNo);
-		getKeysByValue(currentValue);
+		getHashKeysByValue(currentValue);
 	}
 
 	@Override
 	public DBTuple next() {
-		if(currentTuple.eof){
+		if (currentTuple.eof) {
 			return currentTuple;
-		}
-		else{
-			if(it.hasNext()){
+		} else {
+			if (it.hasNext()) {
 				DBTuple leftSection = it.next();
 				return leftSection;
-			}
-			else{
+			} else {
 				currentTuple = rightChild.next();
-				if(currentTuple.eof){
+				if (currentTuple.eof) {
 					return currentTuple;
-				}
-				else{
+				} else {
 					Integer currentValue = currentTuple.getFieldAsInt(rightFieldNo);
-					getKeysByValue(currentValue);
+					getHashKeysByValue(currentValue);
 					return this.next();
 				}
 			}
@@ -78,7 +68,17 @@ public class HashJoin implements VolcanoOperator {
 		rightChild.close();
 	}
 
-	public void getKeysByValue(Integer value){
+	public void buildHashTable(DBTuple currentTuple, int fieldNo) {
+		Integer fieldValue = currentTuple.getFieldAsInt(fieldNo);
+		try {
+			htable.get(fieldValue).add(currentTuple);
+		} catch (NullPointerException e) {
+			htable.put(fieldValue, new ArrayList<DBTuple>());
+			htable.get(fieldValue).add(currentTuple);
+		}
+	}
+
+	public void getHashKeysByValue(Integer value) {
 		matchingTuple = htable.get(value);
 		it = matchingTuple.iterator();
 	}
