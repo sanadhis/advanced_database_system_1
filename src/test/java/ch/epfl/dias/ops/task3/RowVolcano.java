@@ -190,7 +190,7 @@ public class RowVolcano {
     
     @Test
 	public void joinTest2(){
-	    /* SELECT * FROM order O JOIN lineitem ON (o_orderkey = orderkey);*/
+	    /* SELECT * FROM order O JOIN lineitem ON (o_orderkey = orderkey) where O.O_CUSTKEY >= 780017;*/
 	
 		ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
 		ch.epfl.dias.ops.volcano.Scan scanLineitem = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
@@ -213,6 +213,246 @@ public class RowVolcano {
         }
         System.out.println();
 	    assertTrue(output == 27);
-	}
+    }
+    
+    @Test
+	public void joinTest3(){
+	    /* SELECT * FROM order O JOIN lineitem ON (o_orderkey = orderkey) where O.O_CUSTKEY >= 780017;*/
+	
+		ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
+		ch.epfl.dias.ops.volcano.Scan scanLineitem = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+	
+	    /*Filtering on both sides */
+	    ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scanOrder, BinaryOp.GE, 1, 780017);
+        ch.epfl.dias.ops.volcano.Project projLineItem = new Project(scanLineitem, new int[]{0,1,3});
+
+	    ch.epfl.dias.ops.volcano.HashJoin join = new ch.epfl.dias.ops.volcano.HashJoin(selOrder,projLineItem,0,0);
+	    // ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join,Aggregate.COUNT, DataType.INT, 0);
+    
+        join.open();
+
+        DBTuple result = join.next();
+        int output = result.getFieldAsInt(10);
+        while(!result.eof){
+            System.out.println(result.getFieldAsString(4));
+            output = result.getFieldAsInt(10);   
+            System.out.println(output + " " +result.getFieldAsInt(11));         
+            result = join.next();
+        }
+        System.out.println();
+	    assertTrue(output == 1284483);
+    }
+    
+    @Test
+	public void joinTest4(){
+	    /* SELECT L.L_COMMENT, O.O_SHIPPRIORITY FROM order O, lineitem L JOIN lineitem ON (o_orderkey = orderkey) where O.O_CUSTKEY >= 780017;*/
+	
+		ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
+		ch.epfl.dias.ops.volcano.Scan scanLineitem = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+	
+	    /*Filtering on both sides */
+	    ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scanOrder, BinaryOp.GE, 1, 780017);
+
+	    ch.epfl.dias.ops.volcano.HashJoin join = new ch.epfl.dias.ops.volcano.HashJoin(scanLineitem ,selOrder,0,0);
+	    // ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join,Aggregate.COUNT, DataType.INT, 0);
+    
+        ch.epfl.dias.ops.volcano.Project projFinal = new Project(join, new int[]{15,23});
+        projFinal.open();
+
+        DBTuple result = projFinal.next();
+        int output = result.getFieldAsInt(1);
+        while(!result.eof){
+            System.out.println(result.getFieldAsString(0)+  " " +result.getFieldAsInt(1));         
+            output = result.getFieldAsInt(1);   
+            result = projFinal.next();
+        }
+        System.out.println();
+	    assertTrue(output == 0);
+    }
+    
+    @Test
+	public void joinTest5(){
+        // same as above but with to projection
+	    /* SELECT L.L_COMMENT, O.O_SHIPPRIORITY FROM order O, lineitem L JOIN lineitem ON (o_orderkey = orderkey) where O.O_CUSTKEY >= 780017;*/
+	
+		ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
+		ch.epfl.dias.ops.volcano.Scan scanLineitem = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+	
+	    /*Filtering on both sides */
+	    ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scanOrder, BinaryOp.GE, 1, 780017);
+        ch.epfl.dias.ops.volcano.Project projOrder = new Project(selOrder, new int[]{0,7});
+
+	    ch.epfl.dias.ops.volcano.HashJoin join = new ch.epfl.dias.ops.volcano.HashJoin(scanLineitem ,projOrder,0,0);
+	    // ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join,Aggregate.COUNT, DataType.INT, 0);
+    
+        ch.epfl.dias.ops.volcano.Project projFinal = new Project(join, new int[]{15,17});
+        projFinal.open();
+
+        DBTuple result = projFinal.next();
+        int output = result.getFieldAsInt(1);
+        while(!result.eof){
+            System.out.println(result.getFieldAsString(0)+  " " +result.getFieldAsInt(1));         
+            output = result.getFieldAsInt(1);   
+            result = projFinal.next();
+        }
+        System.out.println();
+	    assertTrue(output == 0);
+    }
+    
+    /*
+        Testing Aggregation Start from here
+    */
+	@Test
+	public void query5(){
+	    /* SELECT MAX(L_DISCOUNT) FROM lineitem */	    
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+        ch.epfl.dias.ops.volcano.Project proj = new Project(scan, new int[]{6});
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.MAX, DataType.DOUBLE, 0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+		assertTrue(output == 0.1);
+    }
+    
+    @Test
+	public void query6(){
+	    /* SELECT MIN(L_DISCOUNT) FROM lineitem where L_QUANTITY>=30 */	    
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+        ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.GE, 4, 30);
+        ch.epfl.dias.ops.volcano.Project proj = new Project(selOrder, new int[]{6});
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.MIN, DataType.DOUBLE, 0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+		assertTrue(output == 0.0);
+    }
+    
+    @Test
+	public void query7(){
+	    /* SELECT MIN(L_DISCOUNT) FROM lineitem where L_QUANTITY<30 */	    
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+        ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.LT, 4, 30);
+        ch.epfl.dias.ops.volcano.Project proj = new Project(selOrder, new int[]{6});
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.MIN, DataType.DOUBLE, 0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+		assertTrue(output == 0.04);
+    }
+    
+    @Test
+	public void query8(){
+	    /* SELECT SUM(L_DISCOUNT) FROM lineitem where L_QUANTITY<30 */	    
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+        ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.LT, 4, 30);
+        ch.epfl.dias.ops.volcano.Project proj = new Project(selOrder, new int[]{6});
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.SUM, DataType.DOUBLE, 0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+		assertTrue(output == 0.39);
+    }
+    
+    @Test
+    public void query9(){
+	    /* SELECT AVG(L_DISCOUNT) FROM lineitem where L_QUANTITY<30 */	    
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+        ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.LT, 4, 30);
+        ch.epfl.dias.ops.volcano.Project proj = new Project(selOrder, new int[]{6});
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.AVG, DataType.DOUBLE, 0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+		assertTrue(output == 0.078);
+    }
+    
+    @Test
+    public void query10(){
+	    /* SELECT AVG(L_PARTKEY) FROM lineitem where L_QUANTITY<30 */	    
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+        ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.LT, 4, 30);
+        ch.epfl.dias.ops.volcano.Project proj = new Project(selOrder, new int[]{0});
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(proj, Aggregate.AVG, DataType.INT, 0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+        assertTrue(output == 1.4);
+    }
+    
+    @Test
+	public void query11(){
+	    /* SELECT SUM(O.O_CUSTKEY) FROM order O, lineitem L JOIN lineitem ON (o_orderkey = orderkey) where O.O_CUSTKEY >= 1000000;*/
+	
+		ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
+		ch.epfl.dias.ops.volcano.Scan scanLineitem = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+	
+	    /*Filtering on both sides */
+	    ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scanOrder, BinaryOp.GE, 1, 1000000);
+
+	    ch.epfl.dias.ops.volcano.HashJoin join = new ch.epfl.dias.ops.volcano.HashJoin(scanLineitem ,selOrder,0,0);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join, Aggregate.SUM, DataType.INT, 17);
+    
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        int output = result.getFieldAsInt(0);
+        System.out.println(output + "\n");
+
+        assertTrue(output == 3699420);
+    }
+
+    @Test
+	public void query12(){
+	    /* SELECT AVG(O.O_CUSTKEY) FROM order O, lineitem L JOIN lineitem ON (o_orderkey = orderkey) where O.O_CUSTKEY >= 1000000;*/
+	
+		ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
+		ch.epfl.dias.ops.volcano.Scan scanLineitem = new ch.epfl.dias.ops.volcano.Scan(rowstoreLineItem);
+	
+	    /*Filtering on both sides */
+	    ch.epfl.dias.ops.volcano.Select selOrder = new ch.epfl.dias.ops.volcano.Select(scanOrder, BinaryOp.GE, 1, 1000000);
+
+	    ch.epfl.dias.ops.volcano.HashJoin join = new ch.epfl.dias.ops.volcano.HashJoin(selOrder ,scanLineitem,0,0);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(join, Aggregate.AVG, DataType.INT, 1);
+    
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+        Double output = result.getFieldAsDouble(0);
+        System.out.println(output + "\n");
+
+        assertTrue(output == 1233140.0);
+    }
 	
 }
