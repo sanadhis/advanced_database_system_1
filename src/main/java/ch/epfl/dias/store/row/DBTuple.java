@@ -41,7 +41,7 @@ public class DBTuple {
 		return (String) fields[fieldNo];
 	}
 
-	public Object getFieldAsObject(int fieldNo){
+	public Object getFieldAsObject(int fieldNo) {
 		return fields[fieldNo];
 	}
 }

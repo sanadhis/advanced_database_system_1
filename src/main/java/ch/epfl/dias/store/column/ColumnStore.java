@@ -27,50 +27,35 @@ public class ColumnStore extends Store {
 		this.relationColumn = new ArrayList<DBColumn>(schema.length);
 	}
 
-	public int getNumberOfColumns(){
-		return schema.length;
-	}
-
 	@Override
 	public void load() {
 		String projectPath = System.getProperty("user.dir");
-		Path pathToFile = Paths.get(projectPath + "/" +filename);
+		Path pathToFile = Paths.get(projectPath + "/" + filename);
 		try {
-			InputStream in = Files.newInputStream(pathToFile);
-			BufferedReader reader =	new BufferedReader(new InputStreamReader(in)); 
-			String line = null;
-			List<List<Object>> genericArr = new ArrayList<List<Object>>();
-			
-			for (int i=0; i<schema.length; i++){
-				genericArr.add(new ArrayList<Object>());
+			// Init ArrayList to collect all data
+			List<List<Object>> genericArray = new ArrayList<List<Object>>();
+			for (int i = 0; i < schema.length; i++) {
+				genericArray.add(new ArrayList<Object>());
 			}
 
+			// read per line
+			InputStream in = Files.newInputStream(pathToFile);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			String line = null;
 			while ((line = reader.readLine()) != null) {
-				String[] data = line.split(delimiter);
-				for (int i=0; i<data.length; i++){
-					Object datapoint = null;
-					switch(schema[i]){
-						case INT:
-							datapoint = Integer.parseInt(data[i]);
-							break;
-						case DOUBLE:
-							datapoint = Double.parseDouble(data[i]);
-							break;
-						case STRING:
-							datapoint = data[i];
-							break;
-						case BOOLEAN:
-							datapoint = Boolean.parseBoolean(data[i]);
-							break;
-					}
-					genericArr.get(i).add(datapoint);
+				String[] rawLineData = line.split(delimiter);
+				for (int i = 0; i < rawLineData.length; i++) {
+					Object perFieldData = parseData(rawLineData[i], schema[i]);
+					genericArray.get(i).add(perFieldData);
 				}
 			}
+
+			// convert ArrayList into Array
 			int index = 0;
-			for (List<Object> arr: genericArr){
-				Object[] fields = new Object[arr.size()];
-				fields = arr.toArray(fields);
-				DBColumn perColumn = new DBColumn(fields,schema[index++]);
+			for (List<Object> perColumnData : genericArray) {
+				Object[] perColumnArray = new Object[perColumnData.size()];
+				perColumnArray = perColumnData.toArray(perColumnArray);
+				DBColumn perColumn = new DBColumn(perColumnArray, schema[index++]);
 				relationColumn.add(perColumn);
 			}
 		} catch (IOException x) {
@@ -80,17 +65,45 @@ public class ColumnStore extends Store {
 
 	@Override
 	public DBColumn[] getColumns(int[] columnsToGet) {
-		if(columnsToGet.length == 0){
-			int numberOfColumns = this.getNumberOfColumns();
-			columnsToGet = new int[numberOfColumns];
-			for(int i=0; i<numberOfColumns; i++){
-				columnsToGet[i] = i;
-			}
+		if (columnsToGet.length == 0) {
+			columnsToGet = getAllColumns();
 		}
-		DBColumn[] columnsResult = new DBColumn[columnsToGet.length];
-		for(int i=0; i<columnsToGet.length; i++){
-			columnsResult[i] = relationColumn.get(columnsToGet[i]);
+		DBColumn[] selectedColumns = new DBColumn[columnsToGet.length];
+		for (int i = 0; i < columnsToGet.length; i++) {
+			selectedColumns[i] = relationColumn.get(columnsToGet[i]);
 		}
-		return columnsResult;
+		return selectedColumns;
+	}
+
+	public int getNumberOfColumns() {
+		return schema.length;
+	}
+
+	public int[] getAllColumns() {
+		int numberOfColumns = this.getNumberOfColumns();
+		int[] allFieldsNo = new int[numberOfColumns];
+		for (int i = 0; i < numberOfColumns; i++) {
+			allFieldsNo[i] = i;
+		}
+		return allFieldsNo;
+	}
+
+	public Object parseData(String field, DataType fieldDataType) {
+		Object parsedData = null;
+		switch (fieldDataType) {
+		case INT:
+			parsedData = Integer.parseInt(field);
+			break;
+		case DOUBLE:
+			parsedData = Double.parseDouble(field);
+			break;
+		case STRING:
+			parsedData = field;
+			break;
+		case BOOLEAN:
+			parsedData = Boolean.parseBoolean(field);
+			break;
+		}
+		return parsedData;
 	}
 }

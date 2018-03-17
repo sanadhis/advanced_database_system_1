@@ -10,38 +10,38 @@ public class DBPAXpage {
 
 	private ArrayList<DBColumn> PAXminipages;
 
-	public DBPAXpage(Object[][] pagesRecord, DataType[] types){
+	public DBPAXpage(Object[][] page, DataType[] tupleDataType) {
 		PAXminipages = new ArrayList<DBColumn>();
-		
+
 		int index = 0;
-		for(Object[] pageAttribute: pagesRecord){
-			DBColumn minipage = new DBColumn(pageAttribute, types[index++]);
+		for (Object[] miniPage : page) {
+			DBColumn minipage = new DBColumn(miniPage, tupleDataType[index++]);
 			PAXminipages.add(minipage);
 		}
 	}
 
-	public DBTuple getTuple(int rowNumber){
-		Object[] composedTuple = new Object[PAXminipages.size()];
-		DataType[] types = new DataType[PAXminipages.size()];
+	public DBTuple getTuple(int rowNumber) {
+		Object[] tupleFields = new Object[PAXminipages.size()];
+		DataType[] tupleDataType = new DataType[PAXminipages.size()];
 		int index = 0;
-		for(DBColumn minipage: PAXminipages){
-			types[index] = minipage.getDataType();
-			switch(types[index]){
-				case INT:
-					composedTuple[index] = minipage.getAsInteger()[rowNumber];
-					break;
-				case DOUBLE:
-					composedTuple[index] = minipage.getAsDouble()[rowNumber];
-					break;
-				case STRING:
-					composedTuple[index] = minipage.getAsString()[rowNumber];
-					break;
-				case BOOLEAN:
-					composedTuple[index] = minipage.getAsBoolean()[rowNumber];
-					break;
+		for (DBColumn minipage : PAXminipages) {
+			tupleDataType[index] = minipage.getDataType();
+			switch (tupleDataType[index]) {
+			case INT:
+				tupleFields[index] = minipage.getAsInteger()[rowNumber];
+				break;
+			case DOUBLE:
+				tupleFields[index] = minipage.getAsDouble()[rowNumber];
+				break;
+			case STRING:
+				tupleFields[index] = minipage.getAsString()[rowNumber];
+				break;
+			case BOOLEAN:
+				tupleFields[index] = minipage.getAsBoolean()[rowNumber];
+				break;
 			}
 			index++;
 		}
-		return new DBTuple(composedTuple, types);
+		return new DBTuple(tupleFields, tupleDataType);
 	}
 }
