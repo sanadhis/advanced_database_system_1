@@ -5,6 +5,7 @@ import ch.epfl.dias.store.column.DBColumn;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class Join implements VectorOperator {
 
@@ -67,8 +68,12 @@ public class Join implements VectorOperator {
 			leftHtableIterator = leftHtable.iterator();
 		}
 
-		currentLeftVector = leftIterator.next();
-		currentLeftHTable = leftHtableIterator.next();
+		try {
+			currentLeftVector = leftIterator.next();
+			currentLeftHTable = leftHtableIterator.next();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 
 		if (currentRightVector == null) {
 			return null;
@@ -82,7 +87,7 @@ public class Join implements VectorOperator {
 			*/
 			int index = 0;
 			for (Integer val : currentRightVector[rightFieldNo].getAsInteger()) {
-				if(val!=null){
+				if (val != null) {
 					try {
 						ArrayList<Integer> matchingLeft = currentLeftHTable.get(val);
 						if (matchingLeft != null) {
