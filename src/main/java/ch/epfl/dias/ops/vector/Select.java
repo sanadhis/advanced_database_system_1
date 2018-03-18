@@ -71,31 +71,35 @@ public class Select implements VectorOperator {
 				}
 				index++;
 			}
-			index = 0;
-			for (DBColumn block : childVector) {
-				Object[] result = null;
-				switch (block.getDataType()) {
-				case INT:
-					result = block.getAsInteger();
-					break;
-				case DOUBLE:
-					result = block.getAsDouble();
-					break;
-				case STRING:
-					result = block.getAsString();
-					break;
-				case BOOLEAN:
-					result = block.getAsBoolean();
-					break;
+			if (selectionIndex.size() != 0) {
+				index = 0;
+				for (DBColumn block : childVector) {
+					Object[] result = null;
+					switch (block.getDataType()) {
+					case INT:
+						result = block.getAsInteger();
+						break;
+					case DOUBLE:
+						result = block.getAsDouble();
+						break;
+					case STRING:
+						result = block.getAsString();
+						break;
+					case BOOLEAN:
+						result = block.getAsBoolean();
+						break;
+					}
+					Object[] blockResult = new Object[selectionIndex.size()];
+					for (int i = 0; i < selectionIndex.size(); i++) {
+						blockResult[i] = result[selectionIndex.get(i)];
+					}
+					vectorSelection[index++] = new DBColumn(blockResult, block.getDataType());
 				}
-				Object[] blockResult = new Object[selectionIndex.size()];
-				for (int i = 0; i < selectionIndex.size(); i++) {
-					blockResult[i] = result[selectionIndex.get(i)];
-				}
-				vectorSelection[index++] = new DBColumn(blockResult, block.getDataType());
+				return vectorSelection;
+			} else {
+				return this.next();
 			}
 
-			return vectorSelection;
 		}
 	}
 

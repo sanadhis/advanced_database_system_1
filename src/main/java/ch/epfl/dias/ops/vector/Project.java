@@ -20,12 +20,16 @@ public class Project implements VectorOperator {
 	@Override
 	public DBColumn[] next() {
 		DBColumn[] childVector = child.next();
-		DBColumn[] projectVector = new DBColumn[fieldNo.length];
-		int index = 0;
-		for (int columToGet : fieldNo) {
-			projectVector[index++] = childVector[columToGet];
+		if (childVector == null) {
+			return null;
+		} else {
+			DBColumn[] projectVector = new DBColumn[fieldNo.length];
+			int index = 0;
+			for (int columToGet : fieldNo) {
+				projectVector[index++] = childVector[columToGet];
+			}
+			return projectVector;
 		}
-		return projectVector;
 	}
 
 	@Override

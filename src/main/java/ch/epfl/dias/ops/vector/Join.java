@@ -36,13 +36,15 @@ public class Join implements VectorOperator {
 			Hashtable<Integer, ArrayList<Integer>> hTable = new Hashtable<Integer, ArrayList<Integer>>();
 			int index = 0;
 			for (Integer val : currentLeftVector[leftFieldNo].getAsInteger()) {
-				try {
-					hTable.get(val).add(index);
-				} catch (NullPointerException e) {
-					hTable.put(val, new ArrayList<Integer>());
-					hTable.get(val).add(index);
+				if (val != null) {
+					try {
+						hTable.get(val).add(index);
+					} catch (NullPointerException e) {
+						hTable.put(val, new ArrayList<Integer>());
+						hTable.get(val).add(index);
+					}
+					index++;
 				}
-				index++;
 			}
 			leftHtable.add(hTable);
 			leftVector.add(currentLeftVector);
@@ -80,86 +82,92 @@ public class Join implements VectorOperator {
 			*/
 			int index = 0;
 			for (Integer val : currentRightVector[rightFieldNo].getAsInteger()) {
-				try {
-					ArrayList<Integer> matchingLeft = currentLeftHTable.get(val);
-					if (matchingLeft != null) {
-						for (int i = 0; i < matchingLeft.size(); i++) {
-							rightMatchingEntries.add(index);
+				if(val!=null){
+					try {
+						ArrayList<Integer> matchingLeft = currentLeftHTable.get(val);
+						if (matchingLeft != null) {
+							for (int i = 0; i < matchingLeft.size(); i++) {
+								rightMatchingEntries.add(index);
+							}
 						}
+						rightHtable.get(val).add(index);
+					} catch (NullPointerException e) {
+						rightHtable.put(val, new ArrayList<Integer>());
+						rightHtable.get(val).add(index);
 					}
-					rightHtable.get(val).add(index);
-				} catch (NullPointerException e) {
-					rightHtable.put(val, new ArrayList<Integer>());
-					rightHtable.get(val).add(index);
+					index++;
 				}
-				index++;
 			}
 
-			/*
-				Form list of Left elements
-			*/
-			index = 0;
-			for (Integer val : currentLeftVector[leftFieldNo].getAsInteger()) {
-				try {
-					ArrayList<Integer> matchingRight = rightHtable.get(val);
-					if (matchingRight != null) {
-						for (int i = 0; i < matchingRight.size(); i++) {
-							leftMatchingEntries.add(index);
+			if (rightMatchingEntries.size() == 0) {
+				return this.next();
+			} else {
+				/*
+					Form list of Left elements
+				*/
+				index = 0;
+				for (Integer val : currentLeftVector[leftFieldNo].getAsInteger()) {
+					try {
+						ArrayList<Integer> matchingRight = rightHtable.get(val);
+						if (matchingRight != null) {
+							for (int i = 0; i < matchingRight.size(); i++) {
+								leftMatchingEntries.add(index);
+							}
 						}
+					} catch (NullPointerException e) {
+						// Do nothing
 					}
-				} catch (NullPointerException e) {
-					// Do nothing
+					index++;
 				}
-				index++;
-			}
 
-			DBColumn[] joinResult = new DBColumn[currentLeftVector.length + currentRightVector.length];
-			index = 0;
-			for (DBColumn dbcolumn : currentLeftVector) {
-				Object[] block = null;
-				switch (dbcolumn.getDataType()) {
-				case INT:
-					block = dbcolumn.getAsInteger();
-					break;
-				case DOUBLE:
-					block = dbcolumn.getAsDouble();
-					break;
-				case STRING:
-					block = dbcolumn.getAsString();
-					break;
-				case BOOLEAN:
-					block = dbcolumn.getAsBoolean();
-					break;
+				DBColumn[] joinResult = new DBColumn[currentLeftVector.length + currentRightVector.length];
+				index = 0;
+				for (DBColumn dbcolumn : currentLeftVector) {
+					Object[] block = null;
+					switch (dbcolumn.getDataType()) {
+					case INT:
+						block = dbcolumn.getAsInteger();
+						break;
+					case DOUBLE:
+						block = dbcolumn.getAsDouble();
+						break;
+					case STRING:
+						block = dbcolumn.getAsString();
+						break;
+					case BOOLEAN:
+						block = dbcolumn.getAsBoolean();
+						break;
+					}
+					Object[] blockResult = new Object[leftMatchingEntries.size()];
+					for (int i = 0; i < leftMatchingEntries.size(); i++) {
+						blockResult[i] = block[leftMatchingEntries.get(i)];
+					}
+					joinResult[index++] = new DBColumn(blockResult, dbcolumn.getDataType());
 				}
-				Object[] blockResult = new Object[leftMatchingEntries.size()];
-				for (int i = 0; i < leftMatchingEntries.size(); i++) {
-					blockResult[i] = block[leftMatchingEntries.get(i)];
+				for (DBColumn dbcolumn : currentRightVector) {
+					Object[] block = null;
+					switch (dbcolumn.getDataType()) {
+					case INT:
+						block = dbcolumn.getAsInteger();
+						break;
+					case DOUBLE:
+						block = dbcolumn.getAsDouble();
+						break;
+					case STRING:
+						block = dbcolumn.getAsString();
+						break;
+					case BOOLEAN:
+						block = dbcolumn.getAsBoolean();
+						break;
+					}
+					Object[] blockResult = new Object[rightMatchingEntries.size()];
+					for (int i = 0; i < rightMatchingEntries.size(); i++) {
+						blockResult[i] = block[rightMatchingEntries.get(i)];
+					}
+					joinResult[index++] = new DBColumn(blockResult, dbcolumn.getDataType());
 				}
-				joinResult[index++] = new DBColumn(blockResult, dbcolumn.getDataType());
+				return joinResult;
 			}
-			for (DBColumn dbcolumn : currentRightVector) {
-				Object[] block = null;
-				switch (dbcolumn.getDataType()) {
-				case INT:
-					block = dbcolumn.getAsInteger();
-					break;
-				case DOUBLE:
-					block = dbcolumn.getAsDouble();
-					break;
-				case STRING:
-					block = dbcolumn.getAsString();
-					break;
-				case BOOLEAN:
-					block = dbcolumn.getAsBoolean();
-					break;
-				}
-				Object[] blockResult = new Object[rightMatchingEntries.size()];
-				for (int i = 0; i < rightMatchingEntries.size(); i++) {
-					blockResult[i] = block[rightMatchingEntries.get(i)];
-				}
-				joinResult[index++] = new DBColumn(blockResult, dbcolumn.getDataType());
-			}
-			return joinResult;
 		}
 	}
 

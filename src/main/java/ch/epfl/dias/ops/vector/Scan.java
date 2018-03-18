@@ -26,7 +26,7 @@ public class Scan implements VectorOperator {
 
 	@Override
 	public DBColumn[] next() {
-		if (eofFlag || vectorIndex >= allColumns.length - 1) {
+		if (eofFlag) {
 			return null;
 		} else {
 			DBColumn[] nextVector = new DBColumn[allColumns.length];
@@ -51,10 +51,9 @@ public class Scan implements VectorOperator {
 				for (int i = 0; i < vectorSize; i++) {
 					try {
 						blockResult[i] = result[vectorIndex + i];
+						Object checker = result[vectorIndex + i + 1];
 					} catch (IndexOutOfBoundsException e) {
-						blockResult[i] = null;
 						eofFlag = true;
-						break;
 					}
 				}
 				nextVector[index++] = new DBColumn(blockResult, column.getDataType());
