@@ -61,10 +61,10 @@ public class ColumnarVectorTest {
 			System.out.println(obj);
         }
 
-        test = sel.next();
-		for(Object obj: test[0].getAsInteger()){
-			System.out.println(obj);
-        }
+        // test = sel.next();
+		// for(Object obj: test[0].getAsInteger()){
+		// 	System.out.println(obj);
+        // }
         
 		int output = 3;
 
