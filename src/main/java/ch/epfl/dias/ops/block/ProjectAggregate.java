@@ -28,12 +28,12 @@ public class ProjectAggregate implements BlockOperator {
 
 	public Object aggregate(DBColumn[] block, int fieldNo) {
 		Integer sumInt = new Integer(0);
-		Integer maxInt = new Integer(Integer.MAX_VALUE);
-		Integer minInt = new Integer(Integer.MIN_VALUE);
+		Integer maxInt = new Integer(Integer.MIN_VALUE);
+		Integer minInt = new Integer(Integer.MAX_VALUE);
 		Integer countInt = new Integer(0);
 		Double sumDoub = new Double(0);
-		Double maxDoub = new Double(Double.MAX_VALUE);
-		Double minDoub = new Double(Double.MIN_VALUE);
+		Double maxDoub = new Double(Double.MIN_VALUE);
+		Double minDoub = new Double(Double.MAX_VALUE);
 		Double countDoub = new Double(0);
 
 		switch (block[fieldNo].getDataType()) {
@@ -48,7 +48,7 @@ public class ProjectAggregate implements BlockOperator {
 			break;
 		case DOUBLE:
 			Double[] blockAsDouble = block[fieldNo].getAsDouble();
-			countDoub = (Double) ((Object) blockAsDouble.length);
+			countDoub = (Double) ((double) blockAsDouble.length);
 			for (Double val : blockAsDouble) {
 				sumDoub += val;
 				maxDoub = getMax(maxDoub, val);
