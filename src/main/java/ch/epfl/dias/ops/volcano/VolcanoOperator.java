@@ -4,20 +4,20 @@ import ch.epfl.dias.store.row.DBTuple;
 
 public interface VolcanoOperator {
 
-	/**
-	 * Open operation for tuple-at-a-time operator
-	 */
-	void open();
+    /**
+     * Open operation for tuple-at-a-time operator
+     */
+    void open();
 
-	/**
-	 * Fetch next tuple for tuple-at-a-time operator
-	 * 
-	 * @return
-	 */
-	DBTuple next();
+    /**
+     * Fetch next tuple for tuple-at-a-time operator
+     * 
+     * @return
+     */
+    DBTuple next();
 
-	/**
-	 * Close operation for tuple-at-a-time operator
-	 */
-	void close();
+    /**
+     * Close operation for tuple-at-a-time operator
+     */
+    void close();
 }

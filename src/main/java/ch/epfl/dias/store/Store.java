@@ -10,29 +10,29 @@ import ch.epfl.dias.store.row.DBTuple;
  */
 public abstract class Store {
 
-	/**
-	 * Load the data into the data structures of the store
-	 */
-	public abstract void load();
+    /**
+     * Load the data into the data structures of the store
+     */
+    public abstract void load();
 
-	/**
-	 * Method to access rows available only for row store and PAX
-	 * 
-	 * @param rownumber
-	 * @return
-	 */
-	public DBTuple getRow(int rownumber) {
-		return null;
-	};
+    /**
+     * Method to access rows available only for row store and PAX
+     * 
+     * @param rownumber
+     * @return
+     */
+    public DBTuple getRow(int rownumber) {
+        return null;
+    };
 
-	/**
-	 * Method to access columns available only for column store
-	 * 
-	 * @param columnsToGet
-	 *            (the set of columns to get)
-	 * @return
-	 */
-	public DBColumn[] getColumns(int[] columnsToGet) {
-		return null;
-	};
+    /**
+     * Method to access columns available only for column store
+     * 
+     * @param columnsToGet
+     *            (the set of columns to get)
+     * @return
+     */
+    public DBColumn[] getColumns(int[] columnsToGet) {
+        return null;
+    };
 }
