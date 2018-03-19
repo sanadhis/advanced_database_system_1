@@ -1,8 +1,10 @@
 package ch.epfl.dias.ops.vector;
 
 import ch.epfl.dias.store.column.DBColumn;
+import ch.epfl.dias.store.DataType;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -19,6 +21,18 @@ public class Join implements VectorOperator {
     private Iterator<Hashtable<Integer, ArrayList<Integer>>> leftHtableIterator;
     private DBColumn[] currentRightVector;
 
+    private List<List<Object>> selectedLeftFields;
+    private List<List<Object>> selectedRightFields;
+
+    private List<List<Object>> savedSelectedLeftFields;
+    private List<List<Object>> savedSelectedRightFields;
+
+    private int vectorSize;
+    private int numberOfLeftColumns;
+    private DataType[] leftTypes;
+    private int numberOfRightColumns;
+    private DataType[] rightTypes;
+
     public Join(VectorOperator leftChild, VectorOperator rightChild, int leftFieldNo, int rightFieldNo) {
         this.leftChild = leftChild;
         this.rightChild = rightChild;
@@ -26,13 +40,46 @@ public class Join implements VectorOperator {
         this.rightFieldNo = rightFieldNo;
         this.leftVector = new ArrayList<DBColumn[]>();
         this.leftHtable = new ArrayList<Hashtable<Integer, ArrayList<Integer>>>();
+        this.selectedLeftFields = new ArrayList<List<Object>>();
+        this.selectedRightFields = new ArrayList<List<Object>>();
     }
 
     @Override
     public void open() {
         leftChild.open();
         rightChild.open();
+
         DBColumn[] currentLeftVector = leftChild.next();
+        currentRightVector = rightChild.next();
+
+        try {
+            vectorSize = currentLeftVector[leftFieldNo].getAsInteger().length;
+            numberOfLeftColumns = currentLeftVector.length;
+            leftTypes = new DataType[numberOfLeftColumns];
+            int index = 0;
+            for (DBColumn column : currentLeftVector) {
+                leftTypes[index++] = column.getDataType();
+            }
+        } catch (NullPointerException e) {
+            vectorSize = 0;
+        }
+
+        try {
+            if (currentRightVector[rightFieldNo].getAsInteger().length > vectorSize) {
+                vectorSize = currentRightVector[rightFieldNo].getAsInteger().length;
+            }
+            numberOfRightColumns = currentRightVector.length;
+            rightTypes = new DataType[numberOfRightColumns];
+            int index = 0;
+            for (DBColumn column : currentRightVector) {
+                rightTypes[index++] = column.getDataType();
+            }
+        } catch (NullPointerException e) {
+            vectorSize = 0;
+        }
+
+        initSelectedFields(true, true);
+
         while (currentLeftVector != null) {
             Hashtable<Integer, ArrayList<Integer>> hTable = new Hashtable<Integer, ArrayList<Integer>>();
             int index = 0;
@@ -53,7 +100,6 @@ public class Join implements VectorOperator {
         }
         leftIterator = leftVector.iterator();
         leftHtableIterator = leftHtable.iterator();
-        currentRightVector = rightChild.next();
     }
 
     @Override
@@ -76,8 +122,16 @@ public class Join implements VectorOperator {
         }
 
         if (currentRightVector == null) {
-            return null;
-        } else {
+            if (selectedLeftFields.get(0).size() != 0) {
+                saveSelectedFields(true, true);
+                DBColumn[] joinVec = formJoinVector();
+                initSelectedFields(true, true);
+                return joinVec;
+            } else {
+                return null;
+            }
+        } else {           
+             
             Hashtable<Integer, ArrayList<Integer>> rightHtable = new Hashtable<Integer, ArrayList<Integer>>();
             ArrayList<Integer> leftMatchingEntries = new ArrayList<Integer>();
             ArrayList<Integer> rightMatchingEntries = new ArrayList<Integer>();
@@ -107,6 +161,9 @@ public class Join implements VectorOperator {
             if (rightMatchingEntries.size() == 0) {
                 return this.next();
             } else {
+
+                DBColumn[] joinVector = null;
+
                 /*
                     Form list of Left elements
                 */
@@ -125,7 +182,6 @@ public class Join implements VectorOperator {
                     index++;
                 }
 
-                DBColumn[] joinResult = new DBColumn[currentLeftVector.length + currentRightVector.length];
                 index = 0;
                 for (DBColumn dbcolumn : currentLeftVector) {
                     Object[] block = null;
@@ -143,12 +199,16 @@ public class Join implements VectorOperator {
                         block = dbcolumn.getAsBoolean();
                         break;
                     }
-                    Object[] blockResult = new Object[leftMatchingEntries.size()];
                     for (int i = 0; i < leftMatchingEntries.size(); i++) {
-                        blockResult[i] = block[leftMatchingEntries.get(i)];
+                        selectedLeftFields.get(index).add(block[leftMatchingEntries.get(i)]);
+                        if (selectedLeftFields.get(index).size() == vectorSize && (index+1) == numberOfLeftColumns) {
+                            saveSelectedFields(true, false);
+                            initSelectedFields(true, false);
+                        }
                     }
-                    joinResult[index++] = new DBColumn(blockResult, dbcolumn.getDataType());
+                    index++;
                 }
+                index = 0;
                 for (DBColumn dbcolumn : currentRightVector) {
                     Object[] block = null;
                     switch (dbcolumn.getDataType()) {
@@ -165,13 +225,22 @@ public class Join implements VectorOperator {
                         block = dbcolumn.getAsBoolean();
                         break;
                     }
-                    Object[] blockResult = new Object[rightMatchingEntries.size()];
                     for (int i = 0; i < rightMatchingEntries.size(); i++) {
-                        blockResult[i] = block[rightMatchingEntries.get(i)];
+                        selectedRightFields.get(index).add(block[rightMatchingEntries.get(i)]);
+                        if (selectedRightFields.get(index).size() == vectorSize && (index+1) == numberOfRightColumns) {
+                            saveSelectedFields(false, true);
+                            joinVector = formJoinVector();
+                            initSelectedFields(false, true);
+                        }
                     }
-                    joinResult[index++] = new DBColumn(blockResult, dbcolumn.getDataType());
+                    index++;
                 }
-                return joinResult;
+                
+                if (joinVector != null) {
+                    return joinVector;
+                } else {
+                    return this.next();
+                }
             }
         }
     }
@@ -180,5 +249,48 @@ public class Join implements VectorOperator {
     public void close() {
         leftChild.close();
         rightChild.close();
+    }
+
+    public void initSelectedFields(Boolean left, Boolean right) {
+        if (left) {
+            selectedLeftFields = new ArrayList<List<Object>>();
+            for (int i = 0; i < numberOfLeftColumns; i++) {
+                selectedLeftFields.add(new ArrayList<Object>());
+            }
+        }
+        if (right) {
+            selectedRightFields = new ArrayList<List<Object>>();
+            for (int i = 0; i < numberOfRightColumns; i++) {
+                selectedRightFields.add(new ArrayList<Object>());
+            }
+        }
+    }
+
+    public void saveSelectedFields(Boolean left, Boolean right) {
+        if (left) {
+            savedSelectedLeftFields = new ArrayList<List<Object>>(selectedLeftFields);
+        }
+        if (right) {
+            savedSelectedRightFields = new ArrayList<List<Object>>(selectedRightFields);
+        }
+    }
+
+    public DBColumn[] formJoinVector() {
+        DBColumn[] vectorSelection = new DBColumn[numberOfLeftColumns + numberOfRightColumns];
+        int index = 0;
+        for (List<Object> perColumnData : savedSelectedLeftFields) {
+            Object[] perColumnArray = new Object[perColumnData.size()];
+            perColumnArray = perColumnData.toArray(perColumnArray);
+            vectorSelection[index] = new DBColumn(perColumnArray, leftTypes[index]);
+            index++;
+        }
+        int index1 = 0;
+        for (List<Object> perColumnData : savedSelectedRightFields) {
+            Object[] perColumnArray = new Object[perColumnData.size()];
+            perColumnArray = perColumnData.toArray(perColumnArray);
+            vectorSelection[index] = new DBColumn(perColumnArray, rightTypes[index1++]);
+            index++;
+        }
+        return vectorSelection;
     }
 }

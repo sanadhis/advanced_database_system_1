@@ -44,90 +44,90 @@ public class ColumnarVectorTest {
         columnstoreLineItem.load();
     }
 
-    @Test
-    public void spTestData1() {
-        /* SELECT COUNT(*) FROM data WHERE col4 == 6 */
-        ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreData, 4);
-        ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 3, 6);
-        sel.open();
-        DBColumn[] test = sel.next();
-        while(test!=null){
-            for(Object obj: test[0].getAsInteger()){
-                System.out.println(obj);
-            }
-            test = sel.next();
-        }
-        
-        int output = 3;
+    // @Test
+    // public void spTestData1() {
+    //     /* SELECT COUNT(*) FROM data WHERE col4 == 6 */
+    //     ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreData, 4);
+    //     ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 3, 6);
+    //     sel.open();
+    //     DBColumn[] test = sel.next();
+    //     while(test!=null){
+    //         for(Object obj: test[0].getAsInteger()){
+    //             System.out.println(obj);
+    //         }
+    //         test = sel.next();
+    //     }
 
-        assertTrue(output == 3);
-    }
+    //     int output = 3;
 
-    @Test
-    public void spTestData() {
-        /* SELECT COUNT(*) FROM data WHERE col4 == 6 */
-        ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreData, 4);
-        ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 3, 6);
-        
-        ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(sel, Aggregate.COUNT,
-                DataType.INT, 2);
-        agg.open();
-        DBColumn[] result = agg.next();
+    //     assertTrue(output == 3);
+    // }
 
-        // This query should return only one result
-        int output = result[0].getAsInteger()[0];
-        assertTrue(output == 3);
-    }
+    // @Test
+    // public void spTestData() {
+    //     /* SELECT COUNT(*) FROM data WHERE col4 == 6 */
+    //     ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreData, 4);
+    //     ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 3, 6);
 
-    @Test
-    public void spTestOrder() {
-        /* SELECT COUNT(*) FROM data WHERE col0 == 6 */
-        ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreOrder, 5);
-        ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 0, 6);
-        ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(sel, Aggregate.COUNT,
-                DataType.INT, 1);
-        
-        agg.open();
-        DBColumn[] result = agg.next();
+    //     ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(sel, Aggregate.COUNT,
+    //             DataType.INT, 2);
+    //     agg.open();
+    //     DBColumn[] result = agg.next();
 
-        // This query should return only one result
-        int output = result[0].getAsInteger()[0];
+    //     // This query should return only one result
+    //     int output = result[0].getAsInteger()[0];
+    //     assertTrue(output == 3);
+    // }
 
-        assertTrue(output == 1);
-    }
+    // @Test
+    // public void spTestOrder() {
+    //     /* SELECT COUNT(*) FROM data WHERE col0 == 6 */
+    //     ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreOrder, 5);
+    //     ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 0, 6);
+    //     ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(sel, Aggregate.COUNT,
+    //             DataType.INT, 1);
 
-    @Test
-    public void spTestLineItem() {
-        /* SELECT COUNT(*) FROM data WHERE col0 == 3 */
-        ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreLineItem, 10);
-        ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 0, 3);
-        ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(sel, Aggregate.COUNT,
-                DataType.INT, 2);
+    //     agg.open();
+    //     DBColumn[] result = agg.next();
 
-        agg.open();
-        DBColumn[] result = agg.next();
+    //     // This query should return only one result
+    //     int output = result[0].getAsInteger()[0];
 
-        // This query should return only one result
-        int output = result[0].getAsInteger()[0];
+    //     assertTrue(output == 1);
+    // }
 
-        assertTrue(output == 3);
-    }
+    // @Test
+    // public void spTestLineItem() {
+    //     /* SELECT COUNT(*) FROM data WHERE col0 == 3 */
+    //     ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreLineItem, 10);
+    //     ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 0, 3);
+    //     ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(sel, Aggregate.COUNT,
+    //             DataType.INT, 2);
 
-    @Test
-    public void spTestLineItem2() {
-        /* SELECT COUNT(*) FROM data WHERE col0 == 3 */
-        ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreLineItem, 3);
-        ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(scan, Aggregate.COUNT,
-                DataType.INT, 8);
+    //     agg.open();
+    //     DBColumn[] result = agg.next();
 
-        agg.open();
-        DBColumn[] result = agg.next();
+    //     // This query should return only one result
+    //     int output = result[0].getAsInteger()[0];
 
-        // This query should return only one result
-        int output = result[0].getAsInteger()[0];
-        // System.out.println(output);
-        assertTrue(output == 10);
-    }
+    //     assertTrue(output == 3);
+    // }
+
+    // @Test
+    // public void spTestLineItem2() {
+    //     /* SELECT COUNT(*) FROM data WHERE col0 == 3 */
+    //     ch.epfl.dias.ops.vector.Scan scan = new ch.epfl.dias.ops.vector.Scan(columnstoreLineItem, 3);
+    //     ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(scan, Aggregate.COUNT,
+    //             DataType.INT, 8);
+
+    //     agg.open();
+    //     DBColumn[] result = agg.next();
+
+    //     // This query should return only one result
+    //     int output = result[0].getAsInteger()[0];
+    //     // System.out.println(output);
+    //     assertTrue(output == 10);
+    // }
 
     @Test
     public void joinTest1() {
@@ -141,18 +141,27 @@ public class ColumnarVectorTest {
 
         /* Filtering on both sides */
         ch.epfl.dias.ops.vector.Select selOrder = new ch.epfl.dias.ops.vector.Select(scanOrder, BinaryOp.EQ, 0, 3);
-        ch.epfl.dias.ops.vector.Select selLineitem = new ch.epfl.dias.ops.vector.Select(scanLineitem, BinaryOp.EQ, 0, 3);
+        ch.epfl.dias.ops.vector.Select selLineitem = new ch.epfl.dias.ops.vector.Select(scanLineitem, BinaryOp.EQ, 0,
+                3);
 
         ch.epfl.dias.ops.vector.Join join = new ch.epfl.dias.ops.vector.Join(selOrder, selLineitem, 0, 0);
-        ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(join, Aggregate.COUNT,
-                DataType.INT, 0);
-        
-                agg.open();
+        ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(join,
+                Aggregate.COUNT, DataType.INT, 0);
+
+        agg.open();
         DBColumn[] result = agg.next();
 
         // This query should return only one result
         int output = result[0].getAsInteger()[0];
         // int output = 2;
+
+        // DBColumn[] test = join.next();
+        // while (test != null) {
+        //     for (Object obj : test[0].getAsInteger()) {
+        //         System.out.println(obj);
+        //     }
+        //     test = join.next();
+        // }
 
         assertTrue(output == 3);
     }

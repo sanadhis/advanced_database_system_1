@@ -15,7 +15,7 @@ public class Select implements VectorOperator {
     private int value;
     private int vectorSize;
     private DBColumn[] childVector;
-    List<List<Object>> selectedFields;
+    private List<List<Object>> selectedFields;
 
     private int accumulatedEntry;
     private int numberOfColumns;
