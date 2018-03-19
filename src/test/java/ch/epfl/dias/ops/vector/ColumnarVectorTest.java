@@ -7,7 +7,6 @@ import ch.epfl.dias.store.column.ColumnStore;
 import ch.epfl.dias.store.column.DBColumn;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
