@@ -14,13 +14,14 @@ Project I of [Advanced Database System (CS-422)](http://isa.epfl.ch/imoniteur_IS
 ## Usage
 
 ### Prerequisites
-1. Install [apache maven](https://maven.apache.org/)
-2. Export maven:
+1. Install [apache maven](https://maven.apache.org/).
+2. Install [Java 8](https://java.com/en/download/).
+3. Export maven to your environment:
 ```bash
 export PATH=$PATH:/path/to/maven/bin
 ```
-3. Clone this repository.
-4. Go inside to directory:
+4. Clone this repository.
+5. Go inside to directory:
 ```bash
 cd advanced_database_system_1
 ```
@@ -33,6 +34,14 @@ mvn test
 ### Example of Testing Specific Implementation
 ```bash
 mvn -Dtest=ColumnarVectorTest test
+```
+
+### Advanced Testing using Big Datasets
+1. Download the big datasets for `lineitem` and `order` [here](https://drive.google.com/file/d/14XGrgkNpjwNXkZI3Jz7fRfu6XV2r8Skt/view?usp=sharing).
+2. Unzip and put them inside `input` dir.
+3. Run the test in `ch.epfl.dias.ops.bench`: `ScenarioOne.java`, `ScenarioTwo.java`, `ScenarioThree.java`, `ScenarioFour.java`. For example:
+```bash
+mvn -Dtest=ScenarioOne test
 ```
 
 ## License
