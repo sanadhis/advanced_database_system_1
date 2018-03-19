@@ -92,6 +92,7 @@ public class ColumnarVec {
             for(Object val: result[0].getAsInteger()){
                 System.out.println(val);
             }
+            System.out.println();
             result = proj.next();
         }
         System.out.println();

@@ -47,7 +47,13 @@ public class Scan implements VectorOperator {
                     result = column.getAsBoolean();
                     break;
                 }
-                Object[] blockResult = new Object[vectorSize];
+                Object[] blockResult;
+                if(vectorIndex+vectorSize > result.length){
+                    blockResult = new Object[result.length-vectorIndex];
+                }
+                else{
+                    blockResult = new Object[vectorSize];
+                }
                 for (int i = 0; i < vectorSize; i++) {
                     try {
                         blockResult[i] = result[vectorIndex + i];

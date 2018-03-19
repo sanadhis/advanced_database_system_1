@@ -51,19 +51,12 @@ public class ColumnarVectorTest {
         ch.epfl.dias.ops.vector.Select sel = new ch.epfl.dias.ops.vector.Select(scan, BinaryOp.EQ, 3, 6);
         sel.open();
         DBColumn[] test = sel.next();
-        for(Object obj: test[0].getAsInteger()){
-            System.out.println(obj);
+        while(test!=null){
+            for(Object obj: test[0].getAsInteger()){
+                System.out.println(obj);
+            }
+            test = sel.next();
         }
-
-        test = sel.next();
-        for(Object obj: test[0].getAsInteger()){
-            System.out.println(obj);
-        }
-
-        // test = sel.next();
-        // for(Object obj: test[0].getAsInteger()){
-        // 	System.out.println(obj);
-        // }
         
         int output = 3;
 
