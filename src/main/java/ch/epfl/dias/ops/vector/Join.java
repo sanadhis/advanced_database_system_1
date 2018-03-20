@@ -108,33 +108,27 @@ public class Join implements VectorOperator {
         DBColumn[] currentLeftVector = null;
         Hashtable<Integer, ArrayList<Integer>> currentLeftHTable = new Hashtable<Integer, ArrayList<Integer>>();
 
-        if (!leftIterator.hasNext()) {
-            currentRightVector = rightChild.next();
-            leftIterator = leftVector.iterator();
-            leftHtableIterator = leftHtable.iterator();
-        }
+        while (currentRightVector != null) {
+            if (!leftIterator.hasNext()) {
+                currentRightVector = rightChild.next();
+                leftIterator = leftVector.iterator();
+                leftHtableIterator = leftHtable.iterator();
+            }
 
-        try {
-            currentLeftVector = leftIterator.next();
-            currentLeftHTable = leftHtableIterator.next();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-
-        if (currentRightVector == null) {
-            if (selectedLeftFields.get(0).size() != 0) {
-                saveSelectedFields(true, true);
-                DBColumn[] joinVec = formJoinVector();
-                initSelectedFields(true, true);
-                return joinVec;
-            } else {
+            try {
+                currentLeftVector = leftIterator.next();
+                currentLeftHTable = leftHtableIterator.next();
+            } catch (NoSuchElementException e) {
                 return null;
             }
-        } else {           
-             
             Hashtable<Integer, ArrayList<Integer>> rightHtable = new Hashtable<Integer, ArrayList<Integer>>();
             ArrayList<Integer> leftMatchingEntries = new ArrayList<Integer>();
             ArrayList<Integer> rightMatchingEntries = new ArrayList<Integer>();
+
+
+            if(currentRightVector==null){
+                break;
+            }
 
             /*
                 Form list of Right elements
@@ -158,9 +152,7 @@ public class Join implements VectorOperator {
                 }
             }
 
-            if (rightMatchingEntries.size() == 0) {
-                return this.next();
-            } else {
+            if (rightMatchingEntries.size() != 0) {
 
                 DBColumn[] joinVector = null;
 
@@ -201,7 +193,7 @@ public class Join implements VectorOperator {
                     }
                     for (int i = 0; i < leftMatchingEntries.size(); i++) {
                         selectedLeftFields.get(index).add(block[leftMatchingEntries.get(i)]);
-                        if (selectedLeftFields.get(index).size() == vectorSize && (index+1) == numberOfLeftColumns) {
+                        if (selectedLeftFields.get(index).size() == vectorSize && (index + 1) == numberOfLeftColumns) {
                             saveSelectedFields(true, false);
                             initSelectedFields(true, false);
                         }
@@ -227,7 +219,8 @@ public class Join implements VectorOperator {
                     }
                     for (int i = 0; i < rightMatchingEntries.size(); i++) {
                         selectedRightFields.get(index).add(block[rightMatchingEntries.get(i)]);
-                        if (selectedRightFields.get(index).size() == vectorSize && (index+1) == numberOfRightColumns) {
+                        if (selectedRightFields.get(index).size() == vectorSize
+                                && (index + 1) == numberOfRightColumns) {
                             saveSelectedFields(false, true);
                             joinVector = formJoinVector();
                             initSelectedFields(false, true);
@@ -235,13 +228,20 @@ public class Join implements VectorOperator {
                     }
                     index++;
                 }
-                
+
                 if (joinVector != null) {
                     return joinVector;
-                } else {
-                    return this.next();
                 }
             }
+        }
+
+        if (selectedLeftFields.get(0).size() != 0) {
+            saveSelectedFields(true, true);
+            DBColumn[] joinVec = formJoinVector();
+            initSelectedFields(true, true);
+            return joinVec;
+        } else {
+            return null;
         }
     }
 

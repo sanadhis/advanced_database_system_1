@@ -27,9 +27,7 @@ public class Select implements VolcanoOperator {
     public DBTuple next() {
         DBTuple currentTuple = child.next();
 
-        if (currentTuple.eof) {
-            return currentTuple;
-        } else {
+        while (!currentTuple.eof) {
             boolean selectTuple;
             try {
                 int currentTupleFieldValue = currentTuple.getFieldAsInt(fieldNo);
@@ -40,10 +38,11 @@ public class Select implements VolcanoOperator {
 
             if (selectTuple) {
                 return currentTuple;
-            } else {
-                return this.next();
             }
+            currentTuple = child.next();
         }
+
+        return currentTuple;
     }
 
     @Override

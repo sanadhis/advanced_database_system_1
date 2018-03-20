@@ -45,23 +45,20 @@ public class HashJoin implements VolcanoOperator {
 
     @Override
     public DBTuple next() {
-        if (currentTuple.eof) {
-            return currentTuple;
-        } else {
+        while (!currentTuple.eof) {
             if (it.hasNext()) {
                 DBTuple leftSection = it.next();
                 return joinTuple(leftSection, currentTuple);
             } else {
                 currentTuple = rightChild.next();
-                if (currentTuple.eof) {
-                    return currentTuple;
-                } else {
+                if (!currentTuple.eof) {
                     Integer currentValue = currentTuple.getFieldAsInt(rightFieldNo);
                     getHashKeysByValue(currentValue);
-                    return this.next();
                 }
             }
         }
+
+        return currentTuple;
     }
 
     @Override

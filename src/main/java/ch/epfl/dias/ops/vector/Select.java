@@ -51,14 +51,7 @@ public class Select implements VectorOperator {
 
     @Override
     public DBColumn[] next() {
-        if (vectorSize == 0 || childVector == null) {
-            if (accumulatedEntry != 0) {
-                accumulatedEntry = 0;
-                return this.formSelectedVector();
-            } else {
-                return null;
-            }
-        } else {
+        while (childVector != null) {
             int index = 0;
             ArrayList<Integer> selectionIndex = new ArrayList<Integer>();
             DBColumn[] vectorSelection = null;
@@ -109,11 +102,15 @@ public class Select implements VectorOperator {
 
             if (vectorSelection != null) {
                 return vectorSelection;
-            } else {
-                return this.next();
             }
         }
 
+        if (vectorSize == 0 || accumulatedEntry != 0) {
+            accumulatedEntry = 0;
+            return this.formSelectedVector();
+        } else {
+            return null;
+        }
     }
 
     @Override
